@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Repositories\UserRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
@@ -18,4 +20,22 @@ class UserService
         return $this->userRepository->getAll();
     }
 
+    public function createUser(Request $request)
+    {
+        $email = $request->email;
+        if ($this->userRepository->findByEmail($email)) {
+            return false;
+        }
+
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'is_admin' => false
+        ];
+
+        $user = $this->userRepository->create($data);
+
+        return $user;
+    }
 }
