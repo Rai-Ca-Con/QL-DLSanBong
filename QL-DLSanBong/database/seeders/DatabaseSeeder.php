@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         User::insert([
-            'name' => 'Admina',
+            'name' => 'Admin',
             'email' => 'admin@ex.com',
             'password' => Hash::make(123),
             'is_admin' => true
