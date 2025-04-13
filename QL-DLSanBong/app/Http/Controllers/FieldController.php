@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\AppException;
 use App\Http\Resources\FieldResource;
 use App\Models\Field;
 use App\Responses\APIResponse;

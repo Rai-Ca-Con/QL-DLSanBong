@@ -19,7 +19,7 @@ class FieldService
 
     public function getAllField()
     {
-        throw new AppException(ErrorCode::UNCATEGORIZED_EXCEPTION);
+        throw new AppException(ErrorCode::USER_NON_EXISTED);
     }
 
     public function createField(Request $request) {}

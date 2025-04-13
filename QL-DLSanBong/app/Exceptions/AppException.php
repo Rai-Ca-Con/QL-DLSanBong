@@ -11,8 +11,8 @@ class AppException extends Exception
     //
     public function __construct(ErrorCode $errorCode)
     {
-        $this->errorCode = $errorCode;
         parent::__construct($errorCode->message());
+        $this->errorCode = $errorCode;
     }
 
     public function getErrorCode(){

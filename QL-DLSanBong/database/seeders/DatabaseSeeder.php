@@ -3,9 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use \App\Models\User;
+use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -35,6 +34,10 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make(123),
         ]);
 
-
+        $this->call([
+            CategorySeeder::class,
+            StateSeeder::class,
+            FieldSeeder::class,
+        ]);
     }
 }

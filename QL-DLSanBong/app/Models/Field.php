@@ -9,7 +9,6 @@ class Field extends Model
 {
     use HasFactory;
 
-    protected $table = "field";
     public $timestamps = false;
     protected $fillable = [
         'id',
