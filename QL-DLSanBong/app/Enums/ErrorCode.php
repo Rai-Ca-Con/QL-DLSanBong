@@ -20,6 +20,7 @@ enum ErrorCode
 
     case COMMENT_CONTENT_TOO_SHORT;
     case COMMENT_NON_EXISTED;
+    case FIELD_NOT_FOUND;
 
     public function code(): int
     {
@@ -40,6 +41,8 @@ enum ErrorCode
 
             self::COMMENT_CONTENT_TOO_SHORT => 2002,
             self::COMMENT_NON_EXISTED => 2003,
+
+            self::FIELD_NOT_FOUND => 5000,
         };
     }
 
@@ -62,6 +65,8 @@ enum ErrorCode
 
             self::COMMENT_CONTENT_TOO_SHORT => "Nội dung bình luận không được dưới 15 ký tự",
             self::COMMENT_NON_EXISTED => "Bình luận không tồn tại",
+
+            self::FIELD_NOT_FOUND => "Không tồn tại sân"
         };
     }
 
@@ -72,9 +77,9 @@ enum ErrorCode
             self::UNAUTHENTICATED => 401,
             self::UNAUTHORIZED,
             self::TOKEN_EXPIRED => 403,
-
             self::USER_EXISTED,
             self::EMAIL_EXITED,
+            self::FIELD_NOT_FOUND,
             self::USER_NON_EXISTED,
             self::ANSWER_NON_EXISTED,
             self::FILE_TOO_LARGE,
@@ -83,6 +88,7 @@ enum ErrorCode
             self::PASSWORD_NOT_MATCH,
             self::COMMENT_CONTENT_TOO_SHORT,
             self::COMMENT_NON_EXISTED => 400,
+
         };
     }
 }

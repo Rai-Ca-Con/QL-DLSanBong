@@ -15,11 +15,15 @@ class FieldResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'FieldId'   => $this->id,
-            'FieldName'       => $this->name,
-            'FieldAddress' => $this->address,
-            'FieldPrice'   => $this->price,
-            'FieldDescription'  => $this->description,
+            'id'        => $this->id,
+            'name'      => $this->name,
+            'address'   => $this->address,
+            'price'     => $this->price,
+            'category'  => new CategoryResource($this->whenLoaded('category')),
+            'state'     => new StateResource($this->whenLoaded('state')),
+            'images'    => ImageResource::collection($this->whenLoaded('images')),
+            'created_at'=> $this->created_at,
+            'updated_at'=> $this->updated_at,
         ];
     }
 }

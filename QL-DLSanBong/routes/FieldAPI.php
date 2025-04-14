@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FieldController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,9 +15,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['prefix' => '/field'],
-function () {
-    Route::get('index', [\App\Http\Controllers\FieldController::class,'index']);
-    Route::post('create', [\App\Http\Controllers\FieldController::class,'create']);
-});
+Route::group([
+    'middleware' => ['auth:api', 'authen_admin:api'],
+    'prefix' => '/fields'
+    ], function () {
+        Route::post('/', [FieldController::class, 'store']);        // Tạo sân mới
+        Route::put('{id}', [FieldController::class, 'update']);     // Cập nhật sân
+        Route::delete('{id}', [FieldController::class, 'destroy']); // Xóa sân
+    });
+
+Route::group(['prefix' => '/fields'],
+    function () {
+        Route::get('/', [FieldController::class, 'index']);        // Lấy tất cả sân
+        Route::get('{id}', [FieldController::class, 'show']);      // Lấy chi tiết sân theo ID
+    });
+
+
 

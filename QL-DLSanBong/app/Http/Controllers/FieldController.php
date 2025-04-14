@@ -2,77 +2,87 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\AppException;
 use App\Http\Resources\FieldResource;
-use App\Models\Field;
 use App\Responses\APIResponse;
-use App\Responses\FieldResponse;
-use App\Services\FieldService;
 use Illuminate\Http\Request;
+use App\Services\FieldService;
+use App\Services\ImageService;
 
 class FieldController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     protected $fieldService;
+    protected $imageService;
 
-    public function __construct(FieldService $fieldService)
+    public function __construct(FieldService $fieldService, ImageService $imageService)
     {
         $this->fieldService = $fieldService;
+        $this->imageService = $imageService;
     }
 
-    public function index()
+    // Lấy danh sách tất cả các sân bóng
+    public function index(Request $request)
     {
-        //
-        return APIResponse::success(FieldResource::collection($this->fieldService->getAllField()));
+        $perPage = $request->get('per_page', 10); // Mặc định mỗi trang 10 field
+        return APIResponse::success(FieldResource::collection($this->fieldService->paginate($perPage)));
+        // Throw Ex fieldService->paginate
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // Lấy chi tiết field và ảnh
+    public function show($id)
     {
-        //
+//        $field = $this->fieldService->findById($id);
+//
+//        if (!$field) {
+//            return response()->json(['message' => 'Field not found'], 404);
+//        }
+        return APIResponse::success(new FieldResource($this->fieldService->findById($id)));
+
+//        return response()->json($field);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Tạo mới Field
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $field = $this->fieldService->create($data);
+
+        // Upload ảnh nếu có
+        if ($request->hasFile('image')) {
+            $this->imageService->uploadImage($request, $field->id);
+        }
+        return APIResponse::success(new FieldResource($field));
+
+//        return response()->json(['message' => 'Field created successfully', 'field' => $field], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // Cập nhật Field
+    public function update(Request $request, $id)
     {
-        //
+        $this->fieldService->findById($id);
+        $data = $request->all();
+        $field = $this->fieldService->update($id, $data);
+
+//        if (!$field) {
+//            return response()->json(['message' => 'Field not found'], 404);
+//        }
+
+        // Nếu có ảnh mới thì xóa ảnh cũ rồi thêm ảnh mới
+        if ($request->hasFile('image')) {
+            $this->imageService->deleteByFieldId($id);
+            $this->imageService->uploadImage($request, $id);
+        }
+        return APIResponse::success(new FieldResource($field));
+
+//        return response()->json(['message' => 'Field updated successfully', 'field' => $field]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    // Xoá mềm một sân bóng
+    public function destroy($id)
     {
-        //
+        $this->fieldService->findById($id);
+        $this->fieldService->delete($id);
+        return response()->json(['message' => 'Field deleted successfully!']);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }
