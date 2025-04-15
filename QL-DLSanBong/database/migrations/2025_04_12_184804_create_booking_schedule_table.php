@@ -15,9 +15,10 @@ return new class extends Migration
             $table->char('id', 36)->primary(); // Dùng char cho ID (UUID)
             $table->char('user_id', 36); // Khóa ngoại tới bảng users (UUID)
             $table->char('field_id', 36); // Khóa ngoại tới bảng fields (UUID)
-            $table->time('date_start'); // Thời gian bắt đầu
-            $table->time('date_end');   // Thời gian kết thúc
+            $table->dateTime('date_start'); // Thời gian bắt đầu
+            $table->dateTime('date_end');   // Thời gian kết thúc
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
