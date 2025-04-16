@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,17 +15,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(
-    ['middleware' => 'auth:api',
-    'prefix' => '/user'],
+Route::group([
+    'middleware' => 'auth:api',
+    'prefix' => '/comment'],
     function () {
-        Route::get('index', [\App\Http\Controllers\UserController::class,'index'])->middleware('authen_admin');;
-
-
+        Route::post('create', [\App\Http\Controllers\CommentController::class, 'store']);
+        Route::delete('{id}', [\App\Http\Controllers\CommentController::class, 'destroy']); // Xóa comment
     });
-
-        Route::post('user/create', [\App\Http\Controllers\UserController::class,'create']);
-
 
 
 
