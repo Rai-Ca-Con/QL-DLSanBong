@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\BookingResource;
 use App\Repositories\BookingRepository;
 use App\Repositories\ReceiptRepository;
 use Illuminate\Support\Str;
@@ -27,7 +28,7 @@ class BookingService
 
     public function create(array $data)
     {
-        $available = $this->isAvailable($data['user_id'], $data['field_id'], $data['date_start'], $data['date_end']);
+        $available = $this->isAvailable($data['field_id'], $data['date_start'], $data['date_end']);
 
         if (!$available) {
             throw new AppException(ErrorCode::BOOKING_CONFLICT);
@@ -45,7 +46,7 @@ class BookingService
         $totalPrice = $hours * $pricePerHour;
 
         // Tạo hóa đơn
-        $this->receiptRepository->create([
+        $receipt = $this->receiptRepository->create([
             'user_id'     => $data['user_id'],
             'booking_id'  => $bookingId,
             'date'        => now(),
@@ -53,7 +54,19 @@ class BookingService
             'status'      => 'pending',
         ]);
 
-        return $booking;
+        // 5. Gọi MomoService để tạo thanh toán
+        $momoService = new MomoService();
+        $momoResponse = $momoService->createPayment($totalPrice, $receipt->id);
+
+        // 5. Gọi VNPayService để tạo thanh toán
+        $vnpayService = new VNPayService($this->receiptRepository, $this->bookingRepository);
+        $payUrl = $vnpayService->createPaymentUrl($receipt);
+
+        return [
+            'booking' => $booking,
+            'payUrl' => $payUrl
+        ];
+
     }
 
     public function findById($id)

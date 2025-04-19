@@ -12,3 +12,6 @@ Route::group([
     Route::get('user', [BookingController::class, 'userBookings']); // Lịch sử đặt sân
 });
 
+Route::get('/vnpay/callback', [BookingController::class, 'handleBookingPayment']);
+//Route::match(['get', 'post'], '/vnpay/callback', [BookingController::class, 'handleBookingPayment']);
+

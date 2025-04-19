@@ -49,4 +49,6 @@ class BookingRepository
     {
         return $this->model->where('id', $id)->delete();
     }
+
+
 }
