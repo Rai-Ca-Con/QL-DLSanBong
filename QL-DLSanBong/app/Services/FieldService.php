@@ -4,7 +4,8 @@ namespace App\Services;
 
 use App\Enums\ErrorCode;
 use App\Exceptions\AppException;
-use App\Repositories\FieldRepository;;
+use App\Repositories\FieldRepository;
+use Illuminate\Pagination\LengthAwarePaginator;
 use GuzzleHttp\Client;
 
 class FieldService
@@ -23,7 +24,7 @@ class FieldService
         return $this->repository->getAll();
     }
 
-    public function paginate($perPage = 10)
+    public function paginate($perPage = 12)
     {
         return $this->repository->paginate($perPage);
     }
@@ -55,7 +56,7 @@ class FieldService
         return $this->repository->delete($id);
     }
 
-    public function getFieldsSortedByDistance($userLat, $userLng)
+    public function getFieldsSortedByDistance($userLat, $userLng, $perPage = 12)
     {
         $fields = $this->repository->getAvailableFields();
 
@@ -66,7 +67,7 @@ class FieldService
 
         $body = [
             'locations' => array_merge([[$userLng, $userLat]], $destinations),
-            'metrics' => ['distance'],
+            'metrics' => ['distance', 'duration'],
             'units' => 'km',
         ];
 
@@ -82,12 +83,28 @@ class FieldService
 
         $data = json_decode($response->getBody(), true);
         $distances = $data['distances'][0]; // distance from user to each field
+        $durations = $data['durations'][0];
 
         // Gắn khoảng cách vào field
         foreach ($fields as $index => $field) {
             $field->distance = round($distances[$index + 1], 2);
+            $field->duration = round($durations[$index + 1] / 60, 2);
         }
 
-        return $fields->sortBy('distance')->values(); // sort và reset index
+        $sortedFields = $fields->sortBy('distance')->values(); // sort và reset index
+
+        // Lấy trang hiện tại
+        $page = request()->get('page', 1);
+
+        // Cắt Collection theo phân trang
+        $paginated = new LengthAwarePaginator(
+            $sortedFields->forPage($page, $perPage)->values(),
+            $sortedFields->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        return $paginated;
     }
 }

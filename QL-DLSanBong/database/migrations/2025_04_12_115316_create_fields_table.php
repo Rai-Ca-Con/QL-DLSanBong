@@ -17,8 +17,8 @@ return new class extends Migration
 
             // Các trường thông tin khác
             $table->string('name');
-            $table->decimal('longitude', 10, 7)->nullable();
-            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 20, 15)->nullable();
+            $table->decimal('latitude', 20, 15)->nullable();
             $table->string('address');
             $table->uuid('category_id');
             $table->uuid('state_id');

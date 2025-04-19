@@ -22,9 +22,24 @@ class FieldController extends Controller
     // Lấy danh sách tất cả các sân bóng
     public function index(Request $request)
     {
-        $perPage = $request->get('per_page', 10); // Mặc định mỗi trang 10 field
-        return APIResponse::success(FieldResource::collection($this->fieldService->paginate($perPage)));
+        $perPage = $request->get('per_page', 12);
+        return APIResponse::paginated(FieldResource::collection($this->fieldService->paginate($perPage)));
         // Throw Ex fieldService->paginate
+    }
+
+    public function nearestFields(Request $request)
+    {
+        $lat = $request->input('latitude');
+        $lng = $request->input('longitude');
+        $perPage = $request->input('per_page', 12);
+
+        if (!$lat || !$lng) {
+            return response()->json(['message' => 'Vui lòng cung cấp vị trí người dùng'], 422);
+        }
+
+//        $fields = $this->fieldService->getFieldsSortedByDistance($lat, $lng, $perPage);
+//        return response()->json($fields);
+        return APIResponse::paginated(FieldResource::collection($this->fieldService->getFieldsSortedByDistance($lat, $lng, $perPage)));
     }
 
     // Lấy chi tiết field và ảnh
@@ -83,20 +98,4 @@ class FieldController extends Controller
         $this->fieldService->delete($id);
         return response()->json(['message' => 'Field deleted successfully!']);
     }
-
-    public function nearestFields(Request $request)
-    {
-        $lat = $request->input('latitude');
-        $lng = $request->input('longitude');
-
-        if (!$lat || !$lng) {
-            return response()->json(['message' => 'Vui lòng cung cấp vị trí người dùng'], 422);
-        }
-
-        $fields = $this->fieldService->getFieldsSortedByDistance($lat, $lng);
-
-        return response()->json($fields);
-    }
-
-
 }
