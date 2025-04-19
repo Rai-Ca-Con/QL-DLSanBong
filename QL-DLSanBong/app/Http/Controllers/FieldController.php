@@ -84,5 +84,19 @@ class FieldController extends Controller
         return response()->json(['message' => 'Field deleted successfully!']);
     }
 
+    public function nearestFields(Request $request)
+    {
+        $lat = $request->input('latitude');
+        $lng = $request->input('longitude');
+
+        if (!$lat || !$lng) {
+            return response()->json(['message' => 'Vui lòng cung cấp vị trí người dùng'], 422);
+        }
+
+        $fields = $this->fieldService->getFieldsSortedByDistance($lat, $lng);
+
+        return response()->json($fields);
+    }
+
 
 }
