@@ -37,13 +37,16 @@ class FieldRepository
 
     public function create(array $data)
     {
-        return $this->model->create($data);
+        $field = $this->model->create($data);
+        $field->load(['state', 'category', 'images']);
+        return $field;
     }
 
     public function update($id, array $data)
     {
         $field = $this->model->findOrFail($id);
         $field->update($data);
+        $field->load(['state', 'category', 'images']);
         return $field;
     }
 

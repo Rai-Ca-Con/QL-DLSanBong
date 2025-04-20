@@ -11,16 +11,16 @@ use GuzzleHttp\Client;
 class FieldService
 {
     protected $repository;
+    protected $imageService;
 
-    public function __construct(FieldRepository $repository)
+    public function __construct(FieldRepository $repository, ImageService $imageService)
     {
         $this->repository = $repository;
+        $this->imageService = $imageService;
     }
 
     public function getAll()
     {
-//        throw new AppException(ErrorCode::UNCATEGORIZED_EXCEPTION);
-
         return $this->repository->getAll();
     }
 
@@ -31,8 +31,6 @@ class FieldService
 
     public function findById($id)
     {
-//        $field = $this->repository->find($id);
-
         if (!$this->repository->find($id)) {
             throw new AppException(ErrorCode::FIELD_NOT_FOUND);
         }
@@ -41,14 +39,28 @@ class FieldService
         return $field;
     }
 
-    public function create(array $data)
+    public function create(array $data, $imageRequest = null)
     {
-        return $this->repository->create($data);
+        $field = $this->repository->create($data);
+
+        if ($imageRequest && $imageRequest->hasFile('image')) {
+            $this->imageService->uploadImage($imageRequest, $field->id);
+        }
+
+        $field->load(['category', 'state', 'images']);
+
+        return $field;
     }
 
-    public function update($id, array $data)
+    public function update($id, array $data, $imageRequest = null)
     {
-        return $this->repository->update($id, $data);
+        $field = $this->repository->update($id, $data);
+
+        if ($imageRequest && $imageRequest->hasFile('image')) {
+            $this->imageService->deleteByFieldId($id);
+            $this->imageService->uploadImage($imageRequest, $field->id);
+        }
+        return $field->load(['category', 'state', 'images']);
     }
 
     public function delete($id)
@@ -93,10 +105,8 @@ class FieldService
 
         $sortedFields = $fields->sortBy('distance')->values(); // sort và reset index
 
-        // Lấy trang hiện tại
         $page = request()->get('page', 1);
 
-        // Cắt Collection theo phân trang
         $paginated = new LengthAwarePaginator(
             $sortedFields->forPage($page, $perPage)->values(),
             $sortedFields->count(),
