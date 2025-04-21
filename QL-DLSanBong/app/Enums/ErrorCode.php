@@ -21,6 +21,10 @@ enum ErrorCode
     case COMMENT_CONTENT_TOO_SHORT;
     case COMMENT_NON_EXISTED;
     case FIELD_NOT_FOUND;
+    case BOOKING_CONFLICT;
+    case BOOKING_NOT_FOUND;
+    case UNAUTHORIZED_ACTION;
+
 
     public function code(): int
     {
@@ -43,6 +47,9 @@ enum ErrorCode
             self::COMMENT_NON_EXISTED => 2003,
 
             self::FIELD_NOT_FOUND => 5000,
+            self::BOOKING_CONFLICT => 5001,
+            self::BOOKING_NOT_FOUND => 5002,
+            self::UNAUTHORIZED_ACTION => 5003,
         };
     }
 
@@ -66,7 +73,10 @@ enum ErrorCode
             self::COMMENT_CONTENT_TOO_SHORT => "Nội dung bình luận không được dưới 15 ký tự",
             self::COMMENT_NON_EXISTED => "Bình luận không tồn tại",
 
-            self::FIELD_NOT_FOUND => "Không tồn tại sân"
+            self::FIELD_NOT_FOUND => "Không tồn tại sân",
+            self::BOOKING_CONFLICT => "Sân đã được đặt trong khoảng thời gian này",
+            self::BOOKING_NOT_FOUND => "Lịch đặt sân không được tìm thấy",
+            self::UNAUTHORIZED_ACTION => "Bạn không có quyền thực hiện hành động này"
         };
     }
 
@@ -75,8 +85,10 @@ enum ErrorCode
         return match($this) {
             self::UNCATEGORIZED_EXCEPTION => 500,
             self::UNAUTHENTICATED => 401,
+            self::UNAUTHORIZED_ACTION,
             self::UNAUTHORIZED,
             self::TOKEN_EXPIRED => 403,
+            self::BOOKING_CONFLICT,
             self::USER_EXISTED,
             self::EMAIL_EXITED,
             self::FIELD_NOT_FOUND,
@@ -84,6 +96,7 @@ enum ErrorCode
             self::ANSWER_NON_EXISTED,
             self::FILE_TOO_LARGE,
             self::WRONG_FILE_FORMAT,
+            self::BOOKING_NOT_FOUND,
             self::IMAGE_NON_EXISTED,
             self::PASSWORD_NOT_MATCH,
             self::COMMENT_CONTENT_TOO_SHORT,

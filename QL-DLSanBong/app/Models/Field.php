@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class Field extends Model
 {
     use HasFactory;
-    use SoftDeletes; 
+    use SoftDeletes;
     protected $table = 'fields';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -17,6 +17,8 @@ class Field extends Model
     protected $fillable = [
         'id',
         'name',
+        'longitude',
+        'latitude',
         'address',
         'category_id',
         'state_id',
@@ -36,7 +38,7 @@ class Field extends Model
             }
         });
     }
-    
+
 
     protected $dates = ['deleted_at'];
 

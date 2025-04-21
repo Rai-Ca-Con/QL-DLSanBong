@@ -17,6 +17,8 @@ class FieldResource extends JsonResource
         return [
             'id'        => $this->id,
             'name'      => $this->name,
+            'distance'  => $this->distance,
+            'duration'  => $this->duration,
             'address'   => $this->address,
             'price'     => $this->price,
             'category'  => new CategoryResource($this->whenLoaded('category')),
@@ -25,5 +27,6 @@ class FieldResource extends JsonResource
             'created_at'=> $this->created_at,
             'updated_at'=> $this->updated_at,
         ];
+
     }
 }

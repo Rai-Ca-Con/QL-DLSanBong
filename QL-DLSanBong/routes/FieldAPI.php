@@ -28,6 +28,7 @@ Route::group(['prefix' => '/fields'],
     function () {
         Route::get('/', [FieldController::class, 'index']);        // Lấy tất cả sân
         Route::get('{id}', [FieldController::class, 'show']);      // Lấy chi tiết sân theo ID
+        Route::post('/nearby', [FieldController::class, 'nearestFields']);
     });
 
 

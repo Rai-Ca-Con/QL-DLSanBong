@@ -17,6 +17,14 @@ class FieldRepository
         return $this->model->with(['category', 'state', 'images'])->get();
     }
 
+    public function getAvailableFields()
+    {
+        return $this->model
+            ->whereNull('deleted_at')
+            ->with(['category', 'state', 'images'])
+            ->get();
+    }
+
     public function paginate($perPage = 10)
     {
         return $this->model->with(['category', 'state', 'images'])->paginate($perPage);
@@ -29,13 +37,16 @@ class FieldRepository
 
     public function create(array $data)
     {
-        return $this->model->create($data);
+        $field = $this->model->create($data);
+        $field->load(['state', 'category', 'images']);
+        return $field;
     }
 
     public function update($id, array $data)
     {
         $field = $this->model->findOrFail($id);
         $field->update($data);
+        $field->load(['state', 'category', 'images']);
         return $field;
     }
 

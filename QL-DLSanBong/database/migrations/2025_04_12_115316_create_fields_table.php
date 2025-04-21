@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('fields', function (Blueprint $table) {
             // Tạo UUID làm khóa chính
-            $table->uuid('id')->primary(); 
-            
+            $table->uuid('id')->primary();
+
             // Các trường thông tin khác
             $table->string('name');
+            $table->decimal('longitude', 20, 15)->nullable();
+            $table->decimal('latitude', 20, 15)->nullable();
             $table->string('address');
             $table->uuid('category_id');
             $table->uuid('state_id');
