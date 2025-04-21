@@ -9,6 +9,7 @@ use App\Repositories\Comment;
 use App\Repositories\CommentRepository;
 use App\Repositories\FieldRepository;
 use App\Repositories\UserRepository;
+use App\Responses\PaginateResponse;
 use Illuminate\Support\Facades\Log;
 
 class CommentService
@@ -27,15 +28,19 @@ class CommentService
 
     public function findById($id)
     {
-//        $field = $this->repository->find($id);
-
-        if (!$this->repository->find($id)) {
-            throw new AppException(ErrorCode::FIELD_NOT_FOUND);
+        $existComment = $this->commentRepository->findByIdAndIsDeleted($id);
+        if ($existComment == null) {
+            throw new AppException(ErrorCode::COMMENT_NON_EXISTED);
         }
-        $field = $this->repository->find($id);
-
-        return $field;
+        return new CommentResource($existComment);
     }
+
+    public function paginate($perPage)
+    {
+        $comments = $this->commentRepository->paginate($perPage);
+        return PaginateResponse::paginateToJsonForm($comments);
+    }
+
 
     public function createComment(array $data)
     {
@@ -58,7 +63,20 @@ class CommentService
 
     public function update($id, array $data)
     {
-        return $this->repository->update($id, $data);
+        $existComment = $this->commentRepository->findByIdAndIsDeleted($id);
+        if ($existComment == null) {
+            throw new AppException(ErrorCode::COMMENT_NON_EXISTED);
+        }
+
+        $user = $existComment->user_id;
+
+        if ($user != $data["user_id"]) {
+            throw new AppException(ErrorCode::UNAUTHORIZED);
+        }
+
+        $commentUpdate = $this->commentRepository->update($id, $data);
+
+        return new CommentResource($commentUpdate);
     }
 
     public function delete($id, $currentUser, $role)
@@ -69,11 +87,10 @@ class CommentService
             throw new AppException(ErrorCode::COMMENT_NON_EXISTED);
         }
 
-//        if(!($currentUser === $existComment->user_id || $role == 1)){ // fix lai
-        if ($currentUser != $existComment->user_id) {
+        if (!($currentUser == $existComment->user_id || $role == 1)) { // fix lai
             throw new AppException(ErrorCode::UNAUTHORIZED);
         }
-
         return $this->commentRepository->delete($id);
+
     }
 }

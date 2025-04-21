@@ -2,76 +2,59 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CommentCreated;
+use App\Events\CommentDeleted;
+use App\Events\CommentUpdated;
 use App\Http\Resources\CommentResource;
 use App\Responses\APIResponse;
 use App\Services\CommentService;
 use Illuminate\Http\Request;
-use function Sodium\add;
+use Illuminate\Support\Facades\Log;
 
 class CommentController extends Controller
 {
-    protected $commentService;
+    protected CommentService $commentService;
+
     public function __construct(CommentService $commentService)
     {
         $this->commentService = $commentService;
     }
-    public function index()
+
+    public function index(Request $request)
     {
-        //
+        $perPage = $request->get('per_page', 10); // Mặc định mỗi trang 10 field
+        return APIResponse::success($this->commentService->paginate($perPage));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function findById($comment_id)
     {
-        //
+        return APIResponse::success($this->commentService->findById($comment_id));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
         $data = $request->all();
         $data["user_id"] = auth()->user()->id;
-        return APIResponse::success($this->commentService->createComment($data));
+        $comment = $this->commentService->createComment($data);
+        event(new CommentCreated($comment));
+        return APIResponse::success($comment);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        $data = $request->all();
+        $data["user_id"] = auth()->user()->id;
+        $commentUpdate = $this->commentService->update($id, $data);
+        event(new CommentUpdated($commentUpdate));
+        return APIResponse::success($commentUpdate);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
         $userCurrent = auth()->user()->id;
         $role = auth()->user()->is_admin;
-        return APIResponse::success($this->commentService->delete($id,$userCurrent,$role));
-
+        $commentId = $this->commentService->delete($id, $userCurrent, $role);
+        event(new CommentDeleted($commentId));
+        return APIResponse::success($commentId);
     }
 }

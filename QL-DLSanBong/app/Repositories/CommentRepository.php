@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 use App\Models\Comment;
@@ -7,13 +8,8 @@ class CommentRepository
 {
     public function paginate($perPage = 10)
     {
-    }
-
-    public function findByFieldIdAndStatus($fieldId,$perPage = 10)
-    {
-        return Comment::where('field_id', $fieldId)
-            ->where('status', 0)
-            ->paginate($perPage);
+        return Comment::orderBy('created_at', 'desc')
+        ->paginate($perPage);
     }
 
     public function findByIdAndIsDeleted($commentId)
@@ -30,10 +26,21 @@ class CommentRepository
 
     public function update($id, array $data)
     {
+        $comment = $this->findByIdAndIsDeleted($id);
+
+        $comment->update([
+            'content' => $data['content'],
+        ]);
+
+        return $comment->fresh();
     }
 
     public function delete($id)
     {
-        return Comment::findOrFail($id)->delete();
+        $isDeleted = Comment::findOrFail($id)->delete();
+        if ($isDeleted) {
+            return $id;
+        }
+        return false;
     }
 }
