@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Events\CommentCreated;
 use App\Events\CommentDeleted;
 use App\Events\CommentUpdated;
-use App\Http\Resources\CommentResource;
+use App\Http\Requests\CommentRequest\CreateCommentRequest;
+use App\Http\Requests\CommentRequest\UpdateCommentRequest;
 use App\Responses\APIResponse;
 use App\Services\CommentService;
 use Illuminate\Http\Request;
@@ -31,18 +32,18 @@ class CommentController extends Controller
         return APIResponse::success($this->commentService->findById($comment_id));
     }
 
-    public function store(Request $request)
+    public function store(CreateCommentRequest $commentRequest)
     {
-        $data = $request->all();
+        $data = $commentRequest->validated();
         $data["user_id"] = auth()->user()->id;
         $comment = $this->commentService->createComment($data);
         event(new CommentCreated($comment));
         return APIResponse::success($comment);
     }
 
-    public function update(Request $request, string $id)
+    public function update(UpdateCommentRequest $commentRequest, string $id)
     {
-        $data = $request->all();
+        $data = $commentRequest->validated();
         $data["user_id"] = auth()->user()->id;
         $commentUpdate = $this->commentService->update($id, $data);
         event(new CommentUpdated($commentUpdate));

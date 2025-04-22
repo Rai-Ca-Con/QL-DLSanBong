@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\ErrorCode;
 use App\Exceptions\AppException;
 use App\Http\Resources\CommentResource;
+use App\Repositories\BookingRepository;
 use App\Repositories\Comment;
 use App\Repositories\CommentRepository;
 use App\Repositories\FieldRepository;
@@ -17,13 +18,14 @@ class CommentService
     protected UserRepository $userRepository;
     protected CommentRepository $commentRepository;
     protected FieldRepository $fieldRepository;
+    protected BookingRepository $bookingRepository;
 
-    public function __construct(CommentRepository $commentRepository, UserRepository $userRepository, FieldRepository $fieldRepository)
+    public function __construct(CommentRepository $commentRepository, UserRepository $userRepository, FieldRepository $fieldRepository, BookingRepository $bookingRepository)
     {
         $this->userRepository = $userRepository;
         $this->commentRepository = $commentRepository;
         $this->fieldRepository = $fieldRepository;
-
+        $this->bookingRepository = $bookingRepository;
     }
 
     public function findById($id)
@@ -55,6 +57,11 @@ class CommentService
             throw new AppException(ErrorCode::FIELD_NOT_FOUND);
         }
 
+        $userBookedField = $this->bookingRepository->findByUserAndField($user->id, $field->id);
+        if (!($userBookedField > 0)) {
+            throw new AppException(ErrorCode::UNAUTHORIZED_ACTION);
+        }
+
         $data["status"] = 0;
         $comment = $this->commentRepository->create($data);
 
@@ -64,6 +71,7 @@ class CommentService
     public function update($id, array $data)
     {
         $existComment = $this->commentRepository->findByIdAndIsDeleted($id);
+
         if ($existComment == null) {
             throw new AppException(ErrorCode::COMMENT_NON_EXISTED);
         }
@@ -90,7 +98,7 @@ class CommentService
         if (!($currentUser == $existComment->user_id || $role == 1)) { // fix lai
             throw new AppException(ErrorCode::UNAUTHORIZED);
         }
-        return $this->commentRepository->delete($id);
 
+        return $this->commentRepository->delete($id);
     }
 }
