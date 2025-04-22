@@ -22,8 +22,8 @@ class AppException extends Exception
     public function render($request)
     {
         return response()->json([
-            'message' => $this->errorCode->message(),
             'code' => $this->errorCode->code(),
+            'message' => $this->errorCode->message(),
         ], $this->errorCode->httpStatus());
     }
 }

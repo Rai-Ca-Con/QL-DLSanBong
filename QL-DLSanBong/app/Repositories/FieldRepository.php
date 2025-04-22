@@ -67,4 +67,11 @@ class FieldRepository
     {
         return $this->model->findOrFail($id)->delete();
     }
+
+    public function findByIdAndIsDeleted($fieldId,$isDeleted)
+    {
+        return Field::where('id', $fieldId)
+            ->whereNull('deleted_at')
+            ->first();
+    }
 }

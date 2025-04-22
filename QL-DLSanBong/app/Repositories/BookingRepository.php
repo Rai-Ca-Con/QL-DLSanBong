@@ -50,5 +50,15 @@ class BookingRepository
         return $this->model->where('id', $id)->delete();
     }
 
+    public function findByUserAndField($userId, $fieldId)
+    {
+        return BookingSchedule::where([
+            ['user_id', '=', $userId],
+            ['field_id', '=', $fieldId],
+        ])
+            ->whereNull('deleted_at')
+            ->count();
+    }
+
 
 }

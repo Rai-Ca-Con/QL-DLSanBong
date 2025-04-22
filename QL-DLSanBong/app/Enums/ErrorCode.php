@@ -20,7 +20,10 @@ enum ErrorCode
 
     case COMMENT_CONTENT_TOO_SHORT;
     case COMMENT_NON_EXISTED;
+    case COMMENT_CONTENT_NOT_EMPTY;
+
     case FIELD_NOT_FOUND;
+    case FIELD_NOT_EMPTY;
     case BOOKING_CONFLICT;
     case BOOKING_NOT_FOUND;
     case BOOKING_START_IN_PAST;
@@ -47,7 +50,9 @@ enum ErrorCode
 
             self::COMMENT_CONTENT_TOO_SHORT => 2002,
             self::COMMENT_NON_EXISTED => 2003,
+            self::COMMENT_CONTENT_NOT_EMPTY => 2004,
 
+            self::FIELD_NOT_EMPTY => 5004,
             self::FIELD_NOT_FOUND => 5000,
             self::BOOKING_CONFLICT => 5001,
             self::BOOKING_NOT_FOUND => 5002,
@@ -74,9 +79,11 @@ enum ErrorCode
             self::IMAGE_NON_EXISTED => "Hình ảnh không tồn tại",
             self::PASSWORD_NOT_MATCH => "Password và Retype password không trùng nhau",
 
+            self::COMMENT_CONTENT_NOT_EMPTY => "Nội dung bình luận không được để trống!",
             self::COMMENT_CONTENT_TOO_SHORT => "Nội dung bình luận không được dưới 15 ký tự",
             self::COMMENT_NON_EXISTED => "Bình luận không tồn tại",
 
+            self::FIELD_NOT_EMPTY => "Sân không được để trống!",
             self::FIELD_NOT_FOUND => "Không tồn tại sân",
             self::BOOKING_CONFLICT => "Sân đã được đặt trong khoảng thời gian này",
             self::BOOKING_NOT_FOUND => "Lịch đặt sân không được tìm thấy",
@@ -101,15 +108,28 @@ enum ErrorCode
             self::USER_NON_EXISTED,
             self::ANSWER_NON_EXISTED,
             self::FILE_TOO_LARGE,
+            self::FIELD_NOT_EMPTY,
             self::WRONG_FILE_FORMAT,
+
             self::BOOKING_NOT_FOUND,
             self::BOOKING_START_IN_PAST,
             self::BOOKING_START_TOO_FAR,
             self::IMAGE_NON_EXISTED,
             self::PASSWORD_NOT_MATCH,
+            self::COMMENT_CONTENT_NOT_EMPTY,
             self::COMMENT_CONTENT_TOO_SHORT,
             self::COMMENT_NON_EXISTED => 400,
 
         };
+    }
+
+    public static function getCaseName(string $value)
+    {
+        foreach (self::cases() as $case) {
+            if ($case->name === $value) {
+                return $case;
+            }
+        }
+        return self::UNCATEGORIZED_EXCEPTION; // Không tìm thấy case
     }
 }

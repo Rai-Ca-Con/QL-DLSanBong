@@ -18,12 +18,12 @@ Route::group(
     ['middleware' => 'auth:api',
     'prefix' => '/user'],
     function () {
-        Route::post('create', [\App\Http\Controllers\UserController::class,'create']);
         Route::get('index', [\App\Http\Controllers\UserController::class,'index'])->middleware('authen_admin');;
 
 
     });
 
+        Route::post('user/create', [\App\Http\Controllers\UserController::class,'create']);
 
 
 
