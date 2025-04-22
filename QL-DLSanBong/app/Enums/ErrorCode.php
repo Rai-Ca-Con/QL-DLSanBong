@@ -23,6 +23,8 @@ enum ErrorCode
     case FIELD_NOT_FOUND;
     case BOOKING_CONFLICT;
     case BOOKING_NOT_FOUND;
+    case BOOKING_START_IN_PAST;
+    case BOOKING_START_TOO_FAR;
     case UNAUTHORIZED_ACTION;
 
 
@@ -50,6 +52,8 @@ enum ErrorCode
             self::BOOKING_CONFLICT => 5001,
             self::BOOKING_NOT_FOUND => 5002,
             self::UNAUTHORIZED_ACTION => 5003,
+            self::BOOKING_START_IN_PAST => 5004,
+            self::BOOKING_START_TOO_FAR => 5005,
         };
     }
 
@@ -76,7 +80,9 @@ enum ErrorCode
             self::FIELD_NOT_FOUND => "Không tồn tại sân",
             self::BOOKING_CONFLICT => "Sân đã được đặt trong khoảng thời gian này",
             self::BOOKING_NOT_FOUND => "Lịch đặt sân không được tìm thấy",
-            self::UNAUTHORIZED_ACTION => "Bạn không có quyền thực hiện hành động này"
+            self::UNAUTHORIZED_ACTION => "Bạn không có quyền thực hiện hành động này",
+            self::BOOKING_START_IN_PAST => "Không thể đặt sân trong quá khứ",
+            self::BOOKING_START_TOO_FAR => "Chỉ được đặt sân tối đa trước 30 ngày",
         };
     }
 
@@ -97,6 +103,8 @@ enum ErrorCode
             self::FILE_TOO_LARGE,
             self::WRONG_FILE_FORMAT,
             self::BOOKING_NOT_FOUND,
+            self::BOOKING_START_IN_PAST,
+            self::BOOKING_START_TOO_FAR,
             self::IMAGE_NON_EXISTED,
             self::PASSWORD_NOT_MATCH,
             self::COMMENT_CONTENT_TOO_SHORT,

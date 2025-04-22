@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\ErrorCode;
 use App\Exceptions\AppException;
 use App\Repositories\FieldRepository;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use GuzzleHttp\Client;
 
@@ -68,9 +69,16 @@ class FieldService
         return $this->repository->delete($id);
     }
 
-    public function getFieldsSortedByDistance($userLat, $userLng, $perPage = 12)
+    public function getFilteredFields(Request $request, $perPage = 12)
     {
-        $fields = $this->repository->getAvailableFields();
+        $categoryId = $request->get('category_id');
+        $userLat = $request->input('latitude');
+        $userLng = $request->input('longitude');
+        $perPage = $request->input('per_page', 12);
+
+        $fields = $this->repository->getAvailableFields($categoryId);
+
+//        $fields = $this->repository->getAvailableFields();
 
         $destinations = [];
         foreach ($fields as $field) {

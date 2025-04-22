@@ -26,9 +26,9 @@ Route::group([
 
 Route::group(['prefix' => '/fields'],
     function () {
+        Route::post('/filter', [FieldController::class, 'getFilteredFields']); // Lấy tất cả sân theo bộ lọc
         Route::get('/', [FieldController::class, 'index']);        // Lấy tất cả sân
         Route::get('{id}', [FieldController::class, 'show']);      // Lấy chi tiết sân theo ID
-        Route::post('/nearby', [FieldController::class, 'nearestFields']);
     });
 
 

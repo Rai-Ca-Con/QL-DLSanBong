@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Resources\BookingResource;
 use App\Repositories\BookingRepository;
+use App\Repositories\FieldRepository;
 use App\Repositories\ReceiptRepository;
 use Illuminate\Support\Str;
 use App\Exceptions\AppException;
@@ -14,11 +15,13 @@ class BookingService
 {
     protected $bookingRepository;
     protected $receiptRepository;
+    protected $fieldRepository;
 
-    public function __construct(BookingRepository $bookingRepository, ReceiptRepository $receiptRepository)
+    public function __construct(BookingRepository $bookingRepository, ReceiptRepository $receiptRepository, FieldRepository $fieldRepository)
     {
         $this->bookingRepository = $bookingRepository;
         $this->receiptRepository = $receiptRepository;
+        $this->fieldRepository = $fieldRepository;
     }
 
     public function isAvailable($fieldId, $dateStart, $dateEnd): bool
@@ -40,9 +43,9 @@ class BookingService
         // Tạo lịch đặt sân
         $booking = $this->bookingRepository->create($data);
 
-        // Tính tiền thuê (giả sử 100k/h)
         $hours = Carbon::parse($data['date_start'])->floatDiffInHours(Carbon::parse($data['date_end'])); // Convert to hours
-        $pricePerHour = 100000;
+        $field = $this->fieldRepository->find($data['field_id']);
+        $pricePerHour = $field->price;
         $totalPrice = $hours * $pricePerHour;
 
         // Tạo hóa đơn

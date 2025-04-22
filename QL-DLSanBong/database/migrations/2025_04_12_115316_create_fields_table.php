@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('address');
             $table->uuid('category_id');
             $table->uuid('state_id');
-            $table->float('price');
+            $table->double('price', 10, 2);
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();

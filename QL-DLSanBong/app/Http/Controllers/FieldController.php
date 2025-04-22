@@ -25,7 +25,7 @@ class FieldController extends Controller
         return APIResponse::paginated(FieldResource::collection($this->fieldService->paginate($perPage)));
     }
 
-    public function nearestFields(Request $request)
+    public function getFilteredFields(Request $request)
     {
         $lat = $request->input('latitude');
         $lng = $request->input('longitude');
@@ -35,7 +35,7 @@ class FieldController extends Controller
             return response()->json(['message' => 'Vui lòng cung cấp vị trí người dùng'], 422);
         }
 
-        return APIResponse::paginated(FieldResource::collection($this->fieldService->getFieldsSortedByDistance($lat, $lng, $perPage)));
+        return APIResponse::paginated(FieldResource::collection($this->fieldService->getFilteredFields($request, $perPage)));
     }
 
     public function show($id)

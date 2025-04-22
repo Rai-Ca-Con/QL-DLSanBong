@@ -17,12 +17,25 @@ class FieldRepository
         return $this->model->with(['category', 'state', 'images'])->get();
     }
 
-    public function getAvailableFields()
+//    public function getAvailableFields()
+//    {
+//        return $this->model
+//            ->whereNull('deleted_at')
+//            ->with(['category', 'state', 'images'])
+//            ->get();
+//    }
+
+    public function getAvailableFields($categoryId = null)
     {
-        return $this->model
+        $query = $this->model
             ->whereNull('deleted_at')
-            ->with(['category', 'state', 'images'])
-            ->get();
+            ->with(['category', 'state', 'images']);
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        return $query->get();
     }
 
     public function paginate($perPage = 10)
