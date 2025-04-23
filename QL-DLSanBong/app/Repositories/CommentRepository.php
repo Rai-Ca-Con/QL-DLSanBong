@@ -6,9 +6,10 @@ use App\Models\Comment;
 
 class CommentRepository
 {
-    public function paginate($perPage = 10)
+    public function findByFieldId($fieldId,$perPage = 10)
     {
-        return Comment::orderBy('created_at', 'desc')
+        return Comment::where('field_id', $fieldId)
+        ->orderBy('created_at', 'desc')
         ->paginate($perPage);
     }
 

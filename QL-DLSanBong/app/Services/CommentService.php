@@ -37,10 +37,15 @@ class CommentService
         return new CommentResource($existComment);
     }
 
-    public function paginate($perPage)
+    public function findByFieldId($fieldId,$perPage)
     {
-        $comments = $this->commentRepository->paginate($perPage);
-        return PaginateResponse::paginateToJsonForm($comments);
+        $field = $this->fieldRepository->findByIdAndIsDeleted($fieldId, null);
+        if ($field == null) {
+            throw new AppException(ErrorCode::FIELD_NOT_FOUND);
+        }
+
+        $comments = $this->commentRepository->findByFieldId($fieldId,$perPage);
+        return $comments;
     }
 
 

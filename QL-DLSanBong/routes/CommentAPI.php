@@ -19,7 +19,7 @@ Route::group([
     'middleware' => 'auth:api',
     'prefix' => '/comment'],
     function () {
-        Route::get('index', [\App\Http\Controllers\CommentController::class, 'index']);
+        Route::get('findByFieldId/{field_id}', [\App\Http\Controllers\CommentController::class, 'findByFieldId']);
         Route::get('{comment_id}', [\App\Http\Controllers\CommentController::class, 'findById']);
         Route::post('create', [\App\Http\Controllers\CommentController::class, 'store']);
         Route::patch('update/{comment_id}', [\App\Http\Controllers\CommentController::class, 'update']);
