@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BookingRequest;
+use App\Http\Requests\BookingRequest\BookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Responses\APIResponse;
 use App\Services\BookingService;
 use App\Services\VNPayService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 
 class BookingController extends Controller

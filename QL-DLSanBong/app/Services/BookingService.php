@@ -58,8 +58,8 @@ class BookingService
         ]);
 
         // 5. Gọi MomoService để tạo thanh toán
-        $momoService = new MomoService();
-        $momoResponse = $momoService->createPayment($totalPrice, $receipt->id);
+//        $momoService = new MomoService();
+//        $momoResponse = $momoService->createPayment($totalPrice, $receipt->id);
 
         // 5. Gọi VNPayService để tạo thanh toán
         $vnpayService = new VNPayService($this->receiptRepository, $this->bookingRepository);

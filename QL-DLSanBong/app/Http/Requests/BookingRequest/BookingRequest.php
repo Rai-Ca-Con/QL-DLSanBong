@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\BookingRequest;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Contracts\Validation\Validator;
 use App\Enums\ErrorCode;
 use Carbon\Carbon;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 
 class BookingRequest extends FormRequest

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FieldRequest\CreateFieldRequest;
+use App\Http\Requests\FieldRequest\UpdateFieldRequest;
 use App\Http\Resources\FieldResource;
 use App\Responses\APIResponse;
 use Illuminate\Http\Request;
@@ -43,16 +45,17 @@ class FieldController extends Controller
         return APIResponse::success(new FieldResource($this->fieldService->findById($id)));
     }
 
-    public function store(Request $request)
+    public function store(CreateFieldRequest $request)
     {
-        $data = $request->all();
+        $data = $request->validated();
         $field = $this->fieldService->create($data, $request);
 
         return APIResponse::success(new FieldResource($field));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateFieldRequest $request, $id)
     {
+        $data = $request->validated();
         $this->fieldService->findById($id);
         $data = $request->all();
         $field = $this->fieldService->update($id, $data, $request);
