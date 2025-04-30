@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         User::insert([
+            'id' => "admin_000",
             'name' => 'Admin',
             'email' => 'admin@ex.com',
             'password' => Hash::make(123),
@@ -29,6 +30,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::insert([
+            'id' => "user_001",
             'name' => 'Test user',
             'email' => 'test1@ex.com',
             'password' => Hash::make(123),

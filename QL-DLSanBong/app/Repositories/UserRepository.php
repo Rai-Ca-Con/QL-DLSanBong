@@ -12,7 +12,7 @@ class UserRepository
 
     public function findById($id)
     {
-        return User::findOrFail($id);
+        return User::find($id) ?? null;
     }
 
     public function findByEmail($email)
@@ -23,5 +23,21 @@ class UserRepository
     public function create(array $data)
     {
         return User::create($data);
+    }
+
+    public function update($id, array $data)
+    {
+        $user = $this->findById($id);
+        $user->update($data);
+        return $user->fresh();
+    }
+
+    public function delete($id)
+    {
+        $isDeleted = User::findOrFail($id)->delete();
+        if ($isDeleted) {
+            return $id;
+        }
+        return false;
     }
 }

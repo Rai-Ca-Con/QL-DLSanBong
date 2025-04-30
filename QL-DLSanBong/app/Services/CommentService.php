@@ -6,11 +6,9 @@ use App\Enums\ErrorCode;
 use App\Exceptions\AppException;
 use App\Http\Resources\CommentResource;
 use App\Repositories\BookingRepository;
-use App\Repositories\Comment;
 use App\Repositories\CommentRepository;
 use App\Repositories\FieldRepository;
 use App\Repositories\UserRepository;
-use App\Responses\PaginateResponse;
 use Illuminate\Support\Facades\Log;
 
 class CommentService
@@ -62,10 +60,11 @@ class CommentService
             throw new AppException(ErrorCode::FIELD_NOT_FOUND);
         }
 
-        $userBookedField = $this->bookingRepository->findByUserAndField($user->id, $field->id);
-        if (!($userBookedField > 0)) {
-            throw new AppException(ErrorCode::UNAUTHORIZED_ACTION);
-        }
+//        chi user da dat san do thi moi comment duoc
+//        $userBookedField = $this->bookingRepository->findByUserAndField($user->id, $field->id);
+//        if (!($userBookedField > 0)) {
+//            throw new AppException(ErrorCode::UNAUTHORIZED_ACTION);
+//        }
 
         $data["status"] = 0;
         $comment = $this->commentRepository->create($data);
@@ -100,7 +99,7 @@ class CommentService
             throw new AppException(ErrorCode::COMMENT_NON_EXISTED);
         }
 
-        if (!($currentUser == $existComment->user_id || $role == 1)) { // fix lai
+        if (!($currentUser == $existComment->user_id || $role == 1)) {
             throw new AppException(ErrorCode::UNAUTHORIZED);
         }
 

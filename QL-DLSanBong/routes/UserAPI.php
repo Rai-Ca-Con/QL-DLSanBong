@@ -18,12 +18,12 @@ Route::group(
     ['middleware' => 'auth:api',
     'prefix' => '/user'],
     function () {
-        Route::get('index', [\App\Http\Controllers\UserController::class,'index'])->middleware('authen_admin');;
-
-
+        Route::get('getDetailUser', [\App\Http\Controllers\UserController::class,'getDetailUser']);
+        Route::put('update/{user_id}', [\App\Http\Controllers\UserController::class,'update']);
+        Route::delete('delete/{user_id}', [\App\Http\Controllers\UserController::class,'destroy']);
     });
 
-        Route::post('user/create', [\App\Http\Controllers\UserController::class,'create']);
+Route::post('user/create', [\App\Http\Controllers\UserController::class,'store']);
 
 
 
