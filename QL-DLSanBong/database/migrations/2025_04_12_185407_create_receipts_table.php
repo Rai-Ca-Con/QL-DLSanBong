@@ -16,7 +16,7 @@ return new class extends Migration
             $table->char('user_id', 36); // UUID người dùng
             $table->char('booking_id', 36); // UUID đặt sân
             $table->dateTime('date'); // Ngày tạo hóa đơn
-            $table->float('total_price'); // Tổng tiền
+            $table->double('total_price', 10, 2);
             $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending'); // Trạng thái hóa đơn
             $table->timestamps(); // created_at & updated_at
         });

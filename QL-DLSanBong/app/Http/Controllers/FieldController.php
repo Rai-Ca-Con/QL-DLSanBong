@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FieldRequest\CreateFieldRequest;
+use App\Http\Requests\FieldRequest\UpdateFieldRequest;
 use App\Http\Resources\FieldResource;
 use App\Responses\APIResponse;
 use Illuminate\Http\Request;
@@ -25,7 +27,7 @@ class FieldController extends Controller
         return APIResponse::paginated(FieldResource::collection($this->fieldService->paginate($perPage)));
     }
 
-    public function nearestFields(Request $request)
+    public function getFilteredFields(Request $request)
     {
         $lat = $request->input('latitude');
         $lng = $request->input('longitude');
@@ -35,7 +37,7 @@ class FieldController extends Controller
             return response()->json(['message' => 'Vui lòng cung cấp vị trí người dùng'], 422);
         }
 
-        return APIResponse::paginated(FieldResource::collection($this->fieldService->getFieldsSortedByDistance($lat, $lng, $perPage)));
+        return APIResponse::paginated(FieldResource::collection($this->fieldService->getFilteredFields($request, $perPage)));
     }
 
     public function show($id)
@@ -43,16 +45,17 @@ class FieldController extends Controller
         return APIResponse::success(new FieldResource($this->fieldService->findById($id)));
     }
 
-    public function store(Request $request)
+    public function store(CreateFieldRequest $request)
     {
-        $data = $request->all();
+        $data = $request->validated();
         $field = $this->fieldService->create($data, $request);
 
         return APIResponse::success(new FieldResource($field));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateFieldRequest $request, $id)
     {
+        $data = $request->validated();
         $this->fieldService->findById($id);
         $data = $request->all();
         $field = $this->fieldService->update($id, $data, $request);

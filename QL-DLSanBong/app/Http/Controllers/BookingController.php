@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookingRequest\BookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Responses\APIResponse;
 use App\Services\BookingService;
 use App\Services\VNPayService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 
 class BookingController extends Controller
@@ -22,14 +22,12 @@ class BookingController extends Controller
     }
 
     // Đặt sân
-    public function store(Request $request)
+    public function store(BookingRequest $request)
     {
-        $data = $request->all();
+        $data = $request->validated();
         $data['user_id'] = auth()->id();
-//        return APIResponse::success(new BookingResource($this->bookingService->create($data)));
 
-        // Tạo booking và trả về cùng với payUrl
-        $result = $this->bookingService->create($data); // $result là mảng gồm 'booking' và 'payUrl'
+        $result = $this->bookingService->create($data);
 
         return APIResponse::success([
             'booking' => new BookingResource($result['booking']),
@@ -52,10 +50,10 @@ class BookingController extends Controller
         return APIResponse::success(BookingResource::collection($this->bookingService->getByUserId($userId)));
     }
 
-    // Các phương thức khác trong BookingService
+    // Callback của VNPay (IPN)
     public function handleBookingPayment(Request $request)
     {
-        Log::info('VNPay Callback:', $request->all());
+//        Log::info('VNPay Callback:', $request->all());
         $result = $this->vnPayService->handleCallback($request->all());
         return response()->json($request->all());
     }
