@@ -120,15 +120,15 @@ enum ErrorCode
             self::COMMENT_CONTENT_NOT_EMPTY => 2004,
             self::COMMENT_NOT_REPLY => 2005,
 
-            self::FIELD_NOT_EMPTY => 5004,
             self::FIELD_NOT_FOUND => 5000,
 
             self::BOOKING_CONFLICT => 5001,
             self::BOOKING_NOT_FOUND => 5002,
             self::UNAUTHORIZED_ACTION => 5003,
+            self::FIELD_NOT_EMPTY => 5004,
 
             self::NOT_IMAGE => 6000,
-            self::BOOKING_START_IN_PAST => 5004,
+            self::BOOKING_START_IN_PAST => 5006,
             self::BOOKING_START_TOO_FAR => 5005,
 
 
@@ -286,7 +286,7 @@ enum ErrorCode
             self::COMMENT_CONTENT_TOO_SHORT,
             self::COMMENT_NON_EXISTED,
             self::COMMENT_NOT_REPLY,
-            self::NOT_IMAGE => 400,
+            self::NOT_IMAGE,
 
             self::FIELD_NOT_EMPTY,
             self::FIELD_NOT_FOUND,
