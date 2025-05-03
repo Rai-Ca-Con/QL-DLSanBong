@@ -10,6 +10,7 @@ use App\Repositories\CommentRepository;
 use App\Repositories\FieldRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class CommentService
 {
@@ -18,7 +19,8 @@ class CommentService
     protected FieldRepository $fieldRepository;
     protected BookingRepository $bookingRepository;
 
-    public function __construct(CommentRepository $commentRepository, UserRepository $userRepository, FieldRepository $fieldRepository, BookingRepository $bookingRepository)
+    public function __construct(CommentRepository $commentRepository, UserRepository $userRepository,
+                                FieldRepository $fieldRepository, BookingRepository $bookingRepository)
     {
         $this->userRepository = $userRepository;
         $this->commentRepository = $commentRepository;
@@ -51,6 +53,16 @@ class CommentService
     {
         $user = $this->userRepository->findById($data['user_id']);
         $field = $this->fieldRepository->findByIdAndIsDeleted($data['field_id'], null);
+        if(isset($data["parent_id"]) && $data["parent_id"] != null) {
+            $parentComment = $this->commentRepository->findByIdAndIsDeleted($data['parent_id']);
+            if ($parentComment == null) {
+                throw new AppException(ErrorCode::COMMENT_NON_EXISTED);
+            }
+
+            if ($parentComment->parent_id != null) {
+                throw new AppException(ErrorCode::COMMENT_NOT_REPLY);
+            }
+        }
 
         if ($user == null) {
             throw new AppException(ErrorCode::USER_NON_EXISTED);
@@ -67,8 +79,11 @@ class CommentService
 //        }
 
         $data["status"] = 0;
-        $comment = $this->commentRepository->create($data);
+        if(isset($data["image"]) && $data["image"] != null) {
+            $data["image_url"] = $this->saveImageInDisk($data["image"]);
+        }
 
+        $comment = $this->commentRepository->create($data);
         return new CommentResource($comment);
     }
 
@@ -84,6 +99,11 @@ class CommentService
 
         if ($user != $data["user_id"]) {
             throw new AppException(ErrorCode::UNAUTHORIZED);
+        }
+
+        if(isset($data["image"]) && $data["image"] != null) {
+            $this->deleteImageInDisk($existComment->image_url);
+            $data["image_url"] = $this->saveImageInDisk($data["image"]);
         }
 
         $commentUpdate = $this->commentRepository->update($id, $data);
@@ -105,4 +125,19 @@ class CommentService
 
         return $this->commentRepository->delete($id);
     }
+
+    private function saveImageInDisk($imageFile)
+    {
+        $path = $imageFile->store('images', 'public');
+        return 'storage/' . $path; // Lưu đường dẫn ảnh
+    }
+
+    private function deleteImageInDisk($imageUrl)
+    {
+        $path = str_replace('storage/', '', $imageUrl);
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
+    }
+
 }

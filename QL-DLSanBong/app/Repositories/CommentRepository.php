@@ -8,7 +8,9 @@ class CommentRepository
 {
     public function findByFieldId($fieldId,$perPage = 10)
     {
-        return Comment::where('field_id', $fieldId)
+        return Comment::with('children')
+        ->where('field_id', $fieldId)
+        ->whereNull('parent_id')
         ->orderBy('created_at', 'desc')
         ->paginate($perPage);
     }
@@ -31,6 +33,7 @@ class CommentRepository
 
         $comment->update([
             'content' => $data['content'],
+            'image_url' => $data['image_url'] ?? $comment->image_url
         ]);
 
         return $comment->fresh();

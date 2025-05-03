@@ -18,7 +18,9 @@ class CreateCommentRequest extends FormRequest
     {
         return [
             'content' => 'required|min:15',
-            'field_id' => 'required'
+            'field_id' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:10240',
+            'parent_id' => 'nullable',
         ];
     }
     public function messages()
@@ -27,6 +29,9 @@ class CreateCommentRequest extends FormRequest
             'content.required' => "COMMENT_CONTENT_NOT_EMPTY",
             'content.min' => "COMMENT_CONTENT_TOO_SHORT",
             'field_id.required' => "FIELD_NOT_EMPTY",
+            'image.image' => "NOT_IMAGE",
+            'image.mimes' => "WRONG_FILE_FORMAT",
+            'image.max' => "FILE_TOO_LARGE",
         ];
     }
 

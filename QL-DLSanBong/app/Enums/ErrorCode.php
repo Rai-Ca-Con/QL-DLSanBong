@@ -2,6 +2,8 @@
 
 namespace App\Enums;
 
+use function Symfony\Component\String\s;
+
 enum ErrorCode
 {
     case UNCATEGORIZED_EXCEPTION;
@@ -31,11 +33,12 @@ enum ErrorCode
     case FILE_TOO_LARGE;
     case WRONG_FILE_FORMAT;
     case IMAGE_NON_EXISTED;
-
+    case NOT_IMAGE;
 
     case COMMENT_CONTENT_TOO_SHORT;
     case COMMENT_NON_EXISTED;
     case COMMENT_CONTENT_NOT_EMPTY;
+    case COMMENT_NOT_REPLY;
 
     case FIELD_NOT_FOUND;
     case FIELD_NOT_EMPTY;
@@ -79,6 +82,7 @@ enum ErrorCode
             self::COMMENT_CONTENT_TOO_SHORT => 2002,
             self::COMMENT_NON_EXISTED => 2003,
             self::COMMENT_CONTENT_NOT_EMPTY => 2004,
+            self::COMMENT_NOT_REPLY => 2005,
 
             self::FIELD_NOT_EMPTY => 5004,
             self::FIELD_NOT_FOUND => 5000,
@@ -86,6 +90,8 @@ enum ErrorCode
             self::BOOKING_CONFLICT => 5001,
             self::BOOKING_NOT_FOUND => 5002,
             self::UNAUTHORIZED_ACTION => 5003,
+
+            self::NOT_IMAGE => 6000,
         };
     }
 
@@ -121,10 +127,12 @@ enum ErrorCode
             self::FILE_TOO_LARGE => "Kích thước file vượt quá 10MB",
             self::WRONG_FILE_FORMAT => "Sai định dạng file",
             self::IMAGE_NON_EXISTED => "Hình ảnh không tồn tại",
+            self::NOT_IMAGE => "File tải lên không phải là file ảnh",
 
             self::COMMENT_CONTENT_NOT_EMPTY => "Nội dung bình luận không được để trống!",
             self::COMMENT_CONTENT_TOO_SHORT => "Nội dung bình luận không được dưới 15 ký tự",
             self::COMMENT_NON_EXISTED => "Bình luận không tồn tại",
+            self::COMMENT_NOT_REPLY => "Comment này không thể phản hồi!",
 
             self::FIELD_NOT_EMPTY => "Sân không được để trống!",
             self::FIELD_NOT_FOUND => "Không tồn tại sân",
@@ -171,7 +179,9 @@ enum ErrorCode
             self::BOOKING_NOT_FOUND,
             self::COMMENT_CONTENT_NOT_EMPTY,
             self::COMMENT_CONTENT_TOO_SHORT,
-            self::COMMENT_NON_EXISTED => 400,
+            self::COMMENT_NON_EXISTED,
+            self::COMMENT_NOT_REPLY,
+            self::NOT_IMAGE => 400,
 
         };
     }
