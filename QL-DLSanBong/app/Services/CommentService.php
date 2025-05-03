@@ -73,10 +73,10 @@ class CommentService
         }
 
 //        chi user da dat san do thi moi comment duoc
-//        $userBookedField = $this->bookingRepository->findByUserAndField($user->id, $field->id);
-//        if (!($userBookedField > 0)) {
-//            throw new AppException(ErrorCode::UNAUTHORIZED_ACTION);
-//        }
+        $userBookedField = $this->bookingRepository->findByUserAndField($user->id, $field->id);
+        if (!($userBookedField > 0)) {
+            throw new AppException(ErrorCode::UNAUTHORIZED_ACTION);
+        }
 
         $data["status"] = 0;
         if(isset($data["image"]) && $data["image"] != null) {
