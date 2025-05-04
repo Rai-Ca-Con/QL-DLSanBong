@@ -19,11 +19,6 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
-//    public function getAllUsers()
-//    {
-//        return $this->userRepository->getAll();
-//    }
-
     public function createUser(array $data)
     {
         $user = $this->userRepository->create($data);

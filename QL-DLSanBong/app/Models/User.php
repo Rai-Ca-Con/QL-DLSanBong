@@ -27,6 +27,7 @@ class User extends Authenticatable implements JWTSubject
         'phone_number',
         "address",
         "status",
+        "google_id"
     ];
 
     protected $hidden = [
@@ -34,6 +35,7 @@ class User extends Authenticatable implements JWTSubject
         'remember_token',
         'refresh_token',
         'is_admin',
+        "google_id",
         "status",
         "email_verified_at",
         "created_at",

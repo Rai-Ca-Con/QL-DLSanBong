@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('status')->default('0');
             $table->boolean('is_admin')->default(false);
             $table->string('refresh_token')->default('');
+            $table->string('google_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
