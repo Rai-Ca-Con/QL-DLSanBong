@@ -7,6 +7,7 @@ use App\Events\CommentDeleted;
 use App\Events\CommentUpdated;
 use App\Http\Requests\CommentRequest\CreateCommentRequest;
 use App\Http\Requests\CommentRequest\UpdateCommentRequest;
+use App\Http\Resources\CommentResource;
 use App\Responses\APIResponse;
 use App\Services\CommentService;
 use Illuminate\Http\Request;

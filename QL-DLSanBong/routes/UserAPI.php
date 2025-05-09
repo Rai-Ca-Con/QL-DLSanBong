@@ -19,7 +19,7 @@ Route::group(
     'prefix' => '/user'],
     function () {
         Route::get('getDetailUser', [\App\Http\Controllers\UserController::class,'getDetailUser']);
-        Route::put('update/{user_id}', [\App\Http\Controllers\UserController::class,'update']);
+        Route::post('update/{user_id}', [\App\Http\Controllers\UserController::class,'update']);
         Route::delete('delete/{user_id}', [\App\Http\Controllers\UserController::class,'destroy']);
     });
 

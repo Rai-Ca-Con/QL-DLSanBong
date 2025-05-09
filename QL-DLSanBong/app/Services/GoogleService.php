@@ -23,7 +23,32 @@ class GoogleService
         $this->authService = $authService;
     }
 
-    public function handleGoogleCallback($user)
+//    public function handleGoogleCallback($user)
+//    {
+//        $existingUser = $this->userRepository->findByGoogleId($user->id);
+//        if ($existingUser) {
+//            $credentials = [
+//                'email' => $existingUser->email,
+//                'password' => 'Google1@1'
+//            ];
+//        } else {
+//            $data = [
+//                'name' => $user->name,
+//                'email' => $user->email,
+//                'google_id' => $user->id,
+//                'password' => 'Google1@1',
+//            ];
+//            $user = $this->userRepository->create($data);
+//            $credentials = [
+//                'email' => $user->email,
+//                'password' => 'Google1@1'
+//            ];
+//        }
+//        return $this->authService->login($credentials);
+//    }
+
+
+    public function handleGoogleLogin($user)
     {
         $existingUser = $this->userRepository->findByGoogleId($user->id);
         if ($existingUser) {
@@ -46,4 +71,5 @@ class GoogleService
         }
         return $this->authService->login($credentials);
     }
+
 }

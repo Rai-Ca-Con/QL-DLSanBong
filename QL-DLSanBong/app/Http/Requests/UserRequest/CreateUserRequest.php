@@ -26,6 +26,7 @@ class CreateUserRequest extends FormRequest
             ],
             'password' => 'required|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
             're_password' => 'required|same:password',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:10240',
         ];
     }
     public function messages()
@@ -47,6 +48,9 @@ class CreateUserRequest extends FormRequest
             'password.regex' => "PASSWORD_NOT_FORMAT",
             're_password.required' => "PASSWORD_NOT_NULL",
             're_password.same' => "PASSWORD_NOT_MATCH",
+            'avatar.image' => "NOT_IMAGE",
+            'avatar.mimes' => "WRONG_FILE_FORMAT",
+            'avatar.max' => "FILE_TOO_LARGE",
         ];
     }
 

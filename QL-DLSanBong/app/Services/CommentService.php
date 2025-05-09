@@ -18,14 +18,17 @@ class CommentService
     protected CommentRepository $commentRepository;
     protected FieldRepository $fieldRepository;
     protected BookingRepository $bookingRepository;
+    protected ImageService $imageService;
+
 
     public function __construct(CommentRepository $commentRepository, UserRepository $userRepository,
-                                FieldRepository $fieldRepository, BookingRepository $bookingRepository)
+                                FieldRepository $fieldRepository, BookingRepository $bookingRepository, ImageService $imageService)
     {
         $this->userRepository = $userRepository;
         $this->commentRepository = $commentRepository;
         $this->fieldRepository = $fieldRepository;
         $this->bookingRepository = $bookingRepository;
+        $this->imageService = $imageService;
     }
 
     public function findById($id)
@@ -45,7 +48,7 @@ class CommentService
         }
 
         $comments = $this->commentRepository->findByFieldId($fieldId,$perPage);
-        return $comments;
+        return CommentResource::collection($comments);
     }
 
 
@@ -73,14 +76,14 @@ class CommentService
         }
 
 //        chi user da dat san do thi moi comment duoc
-        $userBookedField = $this->bookingRepository->findByUserAndField($user->id, $field->id);
-        if (!($userBookedField > 0)) {
-            throw new AppException(ErrorCode::UNAUTHORIZED_ACTION);
-        }
+//        $userBookedField = $this->bookingRepository->findByUserAndField($user->id, $field->id);
+//        if (!($userBookedField > 0)) {
+//            throw new AppException(ErrorCode::UNAUTHORIZED_ACTION);
+//        }
 
         $data["status"] = 0;
         if(isset($data["image"]) && $data["image"] != null) {
-            $data["image_url"] = $this->saveImageInDisk($data["image"]);
+            $data["image_url"] = $this->imageService->saveImageInDisk($data["image"],"comment");
         }
 
         $comment = $this->commentRepository->create($data);
@@ -102,8 +105,8 @@ class CommentService
         }
 
         if(isset($data["image"]) && $data["image"] != null) {
-            $this->deleteImageInDisk($existComment->image_url);
-            $data["image_url"] = $this->saveImageInDisk($data["image"]);
+            $this->imageService->deleteImageInDisk($existComment->image_url);
+            $data["image_url"] = $this->imageService->saveImageInDisk($data["image"],"comment");
         }
 
         $commentUpdate = $this->commentRepository->update($id, $data);
@@ -125,19 +128,4 @@ class CommentService
 
         return $this->commentRepository->delete($id);
     }
-
-    private function saveImageInDisk($imageFile)
-    {
-        $path = $imageFile->store('images', 'public');
-        return 'storage/' . $path; // Lưu đường dẫn ảnh
-    }
-
-    private function deleteImageInDisk($imageUrl)
-    {
-        $path = str_replace('storage/', '', $imageUrl);
-        if (Storage::disk('public')->exists($path)) {
-            Storage::disk('public')->delete($path);
-        }
-    }
-
 }

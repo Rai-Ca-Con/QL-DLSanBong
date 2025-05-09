@@ -54,7 +54,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->group(base_path('routes/ReceiptAPI.php'));
 
-            Route::middleware('web')
+            Route::middleware('api')
                 ->group(base_path('routes/GoogleAPI.php'));
 
             Route::middleware('web')

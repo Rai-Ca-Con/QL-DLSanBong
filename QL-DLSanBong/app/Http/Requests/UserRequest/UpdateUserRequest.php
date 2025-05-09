@@ -22,6 +22,7 @@ class UpdateUserRequest extends FormRequest
             'phone_number' => [
                 'regex:/^0(3[0-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/',
             ],
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:10240',
         ];
     }
     public function messages()
@@ -32,6 +33,9 @@ class UpdateUserRequest extends FormRequest
             'address.min' => "ADDRESS_SIZE",
             'address.max' => "ADDRESS_SIZE",
             'phone_number.regex' => "PHONENUMBER_NOT_FORMAT",
+            'avatar.image' => "NOT_IMAGE",
+            'avatar.mimes' => "WRONG_FILE_FORMAT",
+            'avatar.max' => "FILE_TOO_LARGE",
         ];
     }
 

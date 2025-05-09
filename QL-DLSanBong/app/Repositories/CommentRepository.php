@@ -8,7 +8,7 @@ class CommentRepository
 {
     public function findByFieldId($fieldId,$perPage = 10)
     {
-        return Comment::with('children')
+        return Comment::with(['user','children.user'])
         ->where('field_id', $fieldId)
         ->whereNull('parent_id')
         ->orderBy('created_at', 'desc')

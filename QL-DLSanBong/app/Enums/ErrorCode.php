@@ -13,6 +13,7 @@ enum ErrorCode
     case TOKEN_INVALID;
     case INCORRECT_LOGIN_INFO;
     case INCORRECT_RF_TOKEN;
+    case CODE_NOT_EMPTY;
 
     case USER_EXISTED;
     case EMAIL_EXITED;
@@ -94,6 +95,7 @@ enum ErrorCode
             self::INCORRECT_LOGIN_INFO => 1003,
             self::INCORRECT_RF_TOKEN => 1004,
             self::TOKEN_INVALID => 1005,
+            self::CODE_NOT_EMPTY => 1006,
 
             self::USER_EXISTED => 1010,
             self::EMAIL_EXITED => 1011,
@@ -180,6 +182,7 @@ enum ErrorCode
             self::INCORRECT_LOGIN_INFO => "Sai thông tin đăng nhập",
             self::INCORRECT_RF_TOKEN => "Refresh token không hợp lệ hoặc hết hạn",
             self::TOKEN_INVALID => "Token không hợp lệ",
+            self::CODE_NOT_EMPTY => "Mã code không hợp lệ hoặc bị bỏ trống",
 
             self::USER_EXISTED => "User đã tồn tại",
             self::EMAIL_EXITED => "Email đã tồn tại",
@@ -264,6 +267,8 @@ enum ErrorCode
             self::UNAUTHORIZED,
             self::TOKEN_EXPIRED => 403,
 
+
+            self::CODE_NOT_EMPTY,
             self::USER_EXISTED,
             self::EMAIL_EXITED,
             self::USER_NON_EXISTED,

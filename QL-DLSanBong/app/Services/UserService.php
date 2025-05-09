@@ -12,15 +12,22 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserService
 {
-    protected $userRepository;
+    protected UserRepository $userRepository;
 
-    public function __construct(UserRepository $userRepository)
+    protected ImageService $imageService;
+
+    public function __construct(UserRepository $userRepository, ImageService $imageService)
     {
         $this->userRepository = $userRepository;
+        $this->imageService = $imageService;
     }
 
     public function createUser(array $data)
     {
+        if(isset($data["avatar"]) && $data["avatar"] != null) {
+            $data["avatar"] = $this->imageService->saveImageInDisk($data["avatar"],"user");
+        }
+
         $user = $this->userRepository->create($data);
         return $user;
     }
@@ -45,6 +52,11 @@ class UserService
 
         if (isset($data['phone_number']) && !empty($data['phone_number'])) {
             $existingUser->phone_number = $data['phone_number'];
+        }
+
+        if(isset($data["avatar"]) && $data["avatar"] != null) {
+            $this->imageService->deleteImageInDisk($existingUser->avatar);
+            $data["avatar"] = $this->imageService->saveImageInDisk($data["avatar"],"user");
         }
 
         // Save the updated user

@@ -33,7 +33,14 @@ class UserRepository
     public function update($id, array $data)
     {
         $user = $this->findById($id);
-        $user->update($data);
+
+        $user->update([
+            'name' => $data['name'] ?? $user->name,
+            'address' => $data['address'] ?? $user->address,
+            'phone_number' => $data['phone_number'] ?? $user->phone_number,
+            'avatar' => $data['avatar'] ?? $user->avatar
+        ]);
+
         return $user->fresh();
     }
 
