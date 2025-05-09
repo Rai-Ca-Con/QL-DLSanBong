@@ -40,6 +40,11 @@ class FieldService
         return $field;
     }
 
+    public function searchByName(string $keyword)
+    {
+        return $this->repository->searchByName($keyword);
+    }
+
     public function create(array $data, $imageRequest = null)
     {
         $field = $this->repository->create($data);

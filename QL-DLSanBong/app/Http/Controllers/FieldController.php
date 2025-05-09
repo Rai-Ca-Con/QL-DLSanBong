@@ -40,6 +40,20 @@ class FieldController extends Controller
         return APIResponse::paginated(FieldResource::collection($this->fieldService->getFilteredFields($request, $perPage)));
     }
 
+    // Lấy sân theo tên (chat OPTION)
+    public function searchByName(Request $request)
+    {
+        $keyword = $request->query('keyword'); // lấy từ query string ?keyword=tên
+
+        if (!$keyword) {
+            return APIResponse::error('Vui lòng nhập từ khóa tìm kiếm', 400);
+        }
+
+        $fields = $this->fieldService->searchByName($keyword);
+
+        return APIResponse::success(FieldResource::collection($fields));
+    }
+
     public function show($id)
     {
         return APIResponse::success(new FieldResource($this->fieldService->findById($id)));
@@ -57,7 +71,7 @@ class FieldController extends Controller
     {
         $data = $request->validated();
         $this->fieldService->findById($id);
-        $data = $request->all();
+//        $data = $request->all();
         $field = $this->fieldService->update($id, $data, $request);
 
         return APIResponse::success(new FieldResource($field));

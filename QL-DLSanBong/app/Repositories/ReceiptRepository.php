@@ -30,6 +30,11 @@ class ReceiptRepository
         return $this->model->find($id);
     }
 
+    public function findWithBooking($id)
+    {
+        return $this->model->with('booking')->find($id);
+    }
+
     public function findByBookingId($bookingId)
     {
         return $this->model->where('booking_id', $bookingId)->first();

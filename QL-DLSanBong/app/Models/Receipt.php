@@ -13,6 +13,7 @@ class Receipt extends Model
         'date',
         'total_price',
         'status',
+        'expired_at'
     ];
 
     public $incrementing = false;

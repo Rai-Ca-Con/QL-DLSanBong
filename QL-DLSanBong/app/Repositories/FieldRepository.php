@@ -38,6 +38,14 @@ class FieldRepository
         return $query->get();
     }
 
+    public function searchByName(string $keyword)
+    {
+        return $this->model
+            ->where('name', 'like', '%' . $keyword . '%')
+            ->with(['category', 'state', 'images']) // nếu muốn load các mối quan hệ
+            ->get();
+    }
+
     public function paginate($perPage = 10)
     {
         return $this->model->with(['category', 'state', 'images'])->paginate($perPage);

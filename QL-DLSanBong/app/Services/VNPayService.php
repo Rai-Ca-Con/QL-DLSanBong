@@ -65,7 +65,12 @@ class VNPayService
         }
 
         if ($status === '00') {
+            // Xử lý đang thanh toán
             $this->receiptRepo->markAsPaid($receipt);
+            // Xử lý cho việc gửi thông báo về email
+            $receiptId = $params['vnp_TxnRef'];
+            $data = $this->receiptRepo->findWithBooking($receiptId);
+            Log::info('Trả về cho Email:'.$data);
             return ['RspCode' => '00', 'Message' => 'Success'];
         }
         // Thanh toán thất bại

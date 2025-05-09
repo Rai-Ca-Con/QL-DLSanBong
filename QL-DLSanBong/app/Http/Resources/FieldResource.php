@@ -21,6 +21,7 @@ class FieldResource extends JsonResource
             'duration'  => $this->duration,
             'address'   => $this->address,
             'price'     => $this->price,
+            'description' => $this->description,
             'category'  => new CategoryResource($this->whenLoaded('category')),
             'state'     => new StateResource($this->whenLoaded('state')),
             'images'    => ImageResource::collection($this->whenLoaded('images')),

@@ -31,10 +31,18 @@ class BookingService
 
     public function create(array $data)
     {
+        // Kiểm tra sân đã đặt chưa
         $available = $this->isAvailable($data['field_id'], $data['date_start'], $data['date_end']);
 
         if (!$available) {
             throw new AppException(ErrorCode::BOOKING_CONFLICT);
+        }
+        // Kiểm tra sân có hoạt động không
+        $fieldCheck = $this->fieldRepository->find($data['field_id']);
+        $fieldCheck->load('state');
+
+        if (!$fieldCheck->state || $fieldCheck->state->name !== 'Active') {
+            throw new AppException(ErrorCode::FIELD_NOT_ACTIVE);
         }
 
         $bookingId = Str::uuid()->toString();
@@ -55,6 +63,7 @@ class BookingService
             'date'        => now(),
             'total_price' => $totalPrice,
             'status'      => 'pending',
+            'expired_at' => now()->addMinutes(15),
         ]);
 
         // 5. Gọi MomoService để tạo thanh toán
@@ -65,10 +74,14 @@ class BookingService
         $vnpayService = new VNPayService($this->receiptRepository, $this->bookingRepository);
         $payUrl = $vnpayService->createPaymentUrl($receipt);
 
-        return [
-            'booking' => $booking,
-            'payUrl' => $payUrl
-        ];
+        $receipt->payment_url = $payUrl;
+        $receipt->save();
+
+//        return [
+//            'booking' => $booking,
+//            'payUrl' => $payUrl
+//        ];
+        return $booking;
 
     }
 
@@ -85,6 +98,21 @@ class BookingService
     public function getByUserId($userId)
     {
         return $this->bookingRepository->findByUser($userId);
+    }
+
+    public function getTodayPaidBookingsByUser($userId, $date)
+    {
+        return $this->bookingRepository->getTodayPaidBookingsByUser($userId, $date);
+    }
+
+    public function getBookingStatsUntil($date)
+    {
+        return $this->bookingRepository->countBookingsPerFieldUntil($date);
+    }
+
+    public function getMostActiveUsers()
+    {
+        return $this->bookingRepository->getMostActiveUsers();
     }
 
     public function cancel($id, $userId)

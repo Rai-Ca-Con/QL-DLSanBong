@@ -25,6 +25,15 @@ class Handler extends ExceptionHandler
     ];
 
     /**
+     * The list of the exception types that are not reported.
+     *
+     * @var array<int, string>
+     */
+    protected $dontReport = [
+        \App\Exceptions\AppException::class,
+    ];
+
+    /**
      * Register the exception handling callbacks for the application.
      */
     public function register(): void

@@ -61,6 +61,7 @@ enum ErrorCode
     case FIELD_IMAGE_INVALID;
     case FIELD_IMAGE_INVALID_TYPE;
     case FIELD_IMAGE_TOO_LARGE;
+    case FIELD_NOT_ACTIVE;
 
 
 
@@ -126,6 +127,7 @@ enum ErrorCode
             self::FIELD_IMAGE_INVALID => 5182,
             self::FIELD_IMAGE_INVALID_TYPE => 5183,
             self::FIELD_IMAGE_TOO_LARGE => 5184,
+            self::FIELD_NOT_ACTIVE => 5185,
 
 
 
@@ -192,6 +194,7 @@ enum ErrorCode
             self::FIELD_IMAGE_INVALID => 'Tệp phải là hình ảnh',
             self::FIELD_IMAGE_INVALID_TYPE => 'Loại ảnh không được hỗ trợ',
             self::FIELD_IMAGE_TOO_LARGE => 'Ảnh vượt quá dung lượng cho phép (2MB)',
+            self::FIELD_NOT_ACTIVE => 'Sân hiện không hoạt động, không thể đặt chỗ',
 
         };
     }
@@ -244,6 +247,7 @@ enum ErrorCode
             self::FIELD_PRICE_INVALID,
             self::FIELD_PRICE_TOO_LOW,
             self::FIELD_PRICE_TOO_HIGH,
+            self::FIELD_NOT_ACTIVE,
 
             self::FIELD_DESCRIPTION_INVALID,
             self::FIELD_LATITUDE_INVALID,
