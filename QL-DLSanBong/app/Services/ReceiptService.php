@@ -13,8 +13,5 @@ class ReceiptService
         $this->receiptRepository = $receiptRepository;
     }
 
-    public function getRevenueByFieldInRange($startDate, $endDate)
-    {
-        return $this->receiptRepository->getRevenueByFieldInRange($startDate, $endDate);
-    }
+
 }

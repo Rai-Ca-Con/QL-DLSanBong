@@ -16,19 +16,5 @@ class ReceiptController extends Controller
         $this->receiptService = $receiptService;
     }
 
-    public function revenueByField(Request $request)
-    {
-        $start = $request->input('start_date');
-        $end = $request->input('end_date');
 
-        if (!$start || !$end) {
-            return response()->json(['message' => 'Vui lòng cung cấp start_date và end_date'], 422);
-        }
-
-        $revenues = $this->receiptService->getRevenueByFieldInRange($start, $end);
-        return APIResponse::success(ReceiptResource::collection($this->receiptService->getRevenueByFieldInRange($start, $end)));
-
-//        return response()->json($revenues);
-//        return APIResponse::success(FieldResource::collection($this->fieldService->paginate($perPage)));
-    }
 }

@@ -65,32 +65,9 @@ class BookingController extends Controller
         return APIResponse::success(BookingResource::collection($bookings));
     }
 
-    public function statsUntilDate(Request $request)
-    {
-        $date = $request->query('date'); // ví dụ: 2025-05-08
 
-        if (!$date) {
-            return APIResponse::error('Vui lòng truyền ngày thống kê.', 400);
-        }
 
-        $stats = $this->bookingService->getBookingStatsUntil($date);
 
-        $result = $stats->map(function ($item) {
-            return [
-                'field_id'      => $item->field_id,
-                'field_name'    => $item->field->name ?? 'Không xác định',
-                'total_bookings'=> $item->total_bookings,
-            ];
-        });
-
-        return APIResponse::success($result);
-    }
-
-    public function mostActiveUsers()
-    {
-        $users = $this->bookingService->getMostActiveUsers();
-        return APIResponse::success($users);
-    }
 
     // Callback của VNPay (IPN)
     public function handleBookingPayment(Request $request)

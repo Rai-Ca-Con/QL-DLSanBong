@@ -105,16 +105,6 @@ class BookingService
         return $this->bookingRepository->getTodayPaidBookingsByUser($userId, $date);
     }
 
-    public function getBookingStatsUntil($date)
-    {
-        return $this->bookingRepository->countBookingsPerFieldUntil($date);
-    }
-
-    public function getMostActiveUsers()
-    {
-        return $this->bookingRepository->getMostActiveUsers();
-    }
-
     public function cancel($id, $userId)
     {
         $booking = $this->bookingRepository->find($id);
