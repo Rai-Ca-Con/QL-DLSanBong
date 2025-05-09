@@ -18,10 +18,11 @@ class GoogleController extends Controller
         $this->googleService = $googleService;
     }
 
-    public function redirectToGoogle()
-    {
-        return Socialite::driver('google')->redirect();
-    }
+//    public function redirectToGoogle()
+//    {
+//        return Socialite::driver('google')->redirect();
+//    }
+
 //
 //    public function handleGoogleCallback()
 //    {
@@ -31,7 +32,7 @@ class GoogleController extends Controller
 
     public function handleGoogleLogin(GoogleLoginRequest $googleLoginRequest)
     {
-        $code = $googleLoginRequest->validated();
+        $code= $googleLoginRequest->validated()['code'];
 
         try {
             // Lấy user từ mã code (sử dụng Socialite với driver stateless)
@@ -49,11 +50,7 @@ class GoogleController extends Controller
             return $this->googleService->handleGoogleLogin($userInfo);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'code' => 500,
-                'message' => 'Lỗi trong quá trình đăng nhập qua Google',
-                'error' => $e->getMessage(),
-            ], 500);
+            throw new AppException(ErrorCode::CODE_NOT_EMPTY);
         }
 
     }

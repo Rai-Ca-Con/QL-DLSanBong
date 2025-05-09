@@ -62,6 +62,7 @@ class GoogleService
                 'email' => $user->email,
                 'google_id' => $user->id,
                 'password' => 'Google1@1',
+                'avatar' => $user->avatar,
             ];
             $user = $this->userRepository->create($data);
             $credentials = [
