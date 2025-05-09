@@ -48,6 +48,8 @@ enum ErrorCode
     case BOOKING_START_TOO_FAR;
     case UNAUTHORIZED_ACTION;
 
+    case THREAD_NON_EXISTED_OR_NON_PERMISSION;
+
     // Validate Field
     case FIELD_NAME_REQUIRED;
     case FIELD_NAME_MUST_BE_STRING;
@@ -80,7 +82,11 @@ enum ErrorCode
     case FIELD_IMAGE_INVALID_TYPE;
     case FIELD_IMAGE_TOO_LARGE;
 
-
+    case FIELD_CONTENT_REQUIRED;
+    case FIELD_CONTENT_MUST_BE_STRING;
+    case FIELD_THREAD_ID_REQUIRED;
+    case FIELD_THREAD_ID_MUST_BE_STRING;
+    case FIELD_THREAD_ID_TOO_LONG;
 
 
     public function code(): int
@@ -131,6 +137,7 @@ enum ErrorCode
             self::BOOKING_START_IN_PAST => 5006,
             self::BOOKING_START_TOO_FAR => 5005,
 
+            self::THREAD_NON_EXISTED_OR_NON_PERMISSION => 8000,
 
             // Field Validation Codes
             self::FIELD_NAME_REQUIRED => 5100,
@@ -164,7 +171,11 @@ enum ErrorCode
             self::FIELD_IMAGE_INVALID_TYPE => 5183,
             self::FIELD_IMAGE_TOO_LARGE => 5184,
 
-
+            self::FIELD_CONTENT_REQUIRED => 8001,
+            self::FIELD_CONTENT_MUST_BE_STRING => 8002,
+            self::FIELD_THREAD_ID_REQUIRED => 8003,
+            self::FIELD_THREAD_ID_MUST_BE_STRING => 8004,
+            self::FIELD_THREAD_ID_TOO_LONG => 8005
 
         };
     }
@@ -216,6 +227,8 @@ enum ErrorCode
             self::BOOKING_START_IN_PAST => "Không thể đặt sân trong quá khứ",
             self::BOOKING_START_TOO_FAR => "Chỉ được đặt sân tối đa trước 30 ngày",
 
+            self::THREAD_NON_EXISTED_OR_NON_PERMISSION => 'Thread không tồn tại hoặc bạn không có quyền',
+
             // New FIELD Validation Messages
             self::FIELD_NAME_REQUIRED => 'Tên sân không được để trống',
             self::FIELD_NAME_MUST_BE_STRING => 'Tên sân phải là chuỗi',
@@ -248,6 +261,11 @@ enum ErrorCode
             self::FIELD_IMAGE_INVALID_TYPE => 'Loại ảnh không được hỗ trợ',
             self::FIELD_IMAGE_TOO_LARGE => 'Ảnh vượt quá dung lượng cho phép (2MB)',
 
+            self::FIELD_CONTENT_REQUIRED => "Nội dung tin nhắn là bắt buộc",
+            self::FIELD_CONTENT_MUST_BE_STRING => "Nội dung tin nhắn phải là chuỗi",
+            self::FIELD_THREAD_ID_REQUIRED => "Mã cuộc hội thoại là bắt buộc",
+            self::FIELD_THREAD_ID_MUST_BE_STRING => "Mã cuộc hội thoại phải là chuỗi",
+            self::FIELD_THREAD_ID_TOO_LONG => "Mã cuộc hội thoại quá dài"
         };
     }
 
@@ -295,6 +313,8 @@ enum ErrorCode
             self::BOOKING_START_IN_PAST,
             self::BOOKING_START_TOO_FAR,
 
+            self::THREAD_NON_EXISTED_OR_NON_PERMISSION => 400,
+
                 // New Field Validation
             self::FIELD_NAME_REQUIRED,
             self::FIELD_NAME_MUST_BE_STRING,
@@ -327,6 +347,11 @@ enum ErrorCode
             self::FIELD_IMAGE_INVALID_TYPE,
             self::FIELD_IMAGE_TOO_LARGE => 400,
 
+            self::FIELD_CONTENT_REQUIRED,
+            self::FIELD_CONTENT_MUST_BE_STRING,
+            self::FIELD_THREAD_ID_REQUIRED,
+            self::FIELD_THREAD_ID_MUST_BE_STRING,
+            self::FIELD_THREAD_ID_TOO_LONG => 400,
         };
     }
 
