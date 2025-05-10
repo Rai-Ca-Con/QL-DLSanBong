@@ -74,8 +74,8 @@ class VNPayService
             $receiptId = $params['vnp_TxnRef'];
             $receiptWithUserAndBooking = $this->receiptRepo->findWithBooking($receiptId);
             $field = $this->fieldRepo->findById($receiptWithUserAndBooking->booking->field_id);
-
-            Log::info('Gộp obj1 và obj2:', [$receiptWithUserAndBooking, $field]);
+            $receiptWithUserAndBooking->field = $field;
+            Log::info($receiptWithUserAndBooking);
             return ['RspCode' => '00', 'Message' => 'Success'];
         }
         // Thanh toán thất bại
