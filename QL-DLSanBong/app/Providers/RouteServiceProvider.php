@@ -57,6 +57,10 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('api')
                 ->group(base_path('routes/GoogleAPI.php'));
 
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/StatisticAPI.php'));
+
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });

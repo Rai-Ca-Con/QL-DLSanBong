@@ -16,31 +16,25 @@ class StateSeeder extends Seeder
         DB::table('states')->insert([
             [
                 'id' => 'state-001',
-                'name' => 'Hoạt động',
+                'name' => 'Active',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'id' => 'state-002',
-                'name' => 'Bảo trì',
+                'name' => 'Maintenance',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'id' => 'state-003',
-                'name' => 'Tạm ngưng',
+                'name' => 'Suspended',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'id' => 'state-004',
-                'name' => 'Đang đặt lịch',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'id' => 'state-005',
-                'name' => 'Ngưng sử dụng',
+                'name' => 'Deactivated',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],

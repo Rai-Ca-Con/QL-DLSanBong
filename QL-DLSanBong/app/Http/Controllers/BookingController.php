@@ -28,11 +28,15 @@ class BookingController extends Controller
         $data['user_id'] = auth()->id();
 
         $result = $this->bookingService->create($data);
+//        $booking = $result['booking'];
+        $booking = $result->load('field', 'receipt');
 
-        return APIResponse::success([
-            'booking' => new BookingResource($result['booking']),
-            'payUrl' => $result['payUrl']
-        ]);
+//        return APIResponse::success([
+//            'booking' => new BookingResource($booking),
+//            'payUrl' => $result['payUrl']
+//        ]);
+
+        return APIResponse::success(new BookingResource($booking));
     }
 
     // Huỷ đặt sân
@@ -49,6 +53,21 @@ class BookingController extends Controller
         $userId = auth()->id();
         return APIResponse::success(BookingResource::collection($this->bookingService->getByUserId($userId)));
     }
+
+    // Lấy danh sách đặt sân trong ngày (đã thanh toán) => sử dụng cho chat option
+    public function userBookingsToday()
+    {
+        $userId = auth()->id();
+        $today = now()->toDateString();
+
+        $bookings = $this->bookingService->getTodayPaidBookingsByUser($userId, $today);
+
+        return APIResponse::success(BookingResource::collection($bookings));
+    }
+
+
+
+
 
     // Callback của VNPay (IPN)
     public function handleBookingPayment(Request $request)

@@ -25,7 +25,6 @@ class UpdateFieldRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required'|'uuid'|'exists:fields,id',
             'name' => 'sometimes|required|string|max:255',
             'address' => 'sometimes|required|string|max:255',
             'category_id' => 'sometimes|required|exists:categories,id',
@@ -42,10 +41,6 @@ class UpdateFieldRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'id.required' => 'FIELD_ID_REQUIRED',
-            'id.uuid' => 'FIELD_ID_INVALID',
-            'id.exists' => 'FIELD_ID_NOT_FOUND',
-
             'name.required' => 'FIELD_NAME_REQUIRED',
             'name.string' => 'FIELD_NAME_MUST_BE_STRING',
             'name.max' => 'FIELD_NAME_TOO_LONG',
