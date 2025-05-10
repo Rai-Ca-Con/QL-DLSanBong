@@ -22,17 +22,20 @@ class CommentController extends Controller
         $this->commentService = $commentService;
     }
 
+    // lay ra nhung comment theo tung san
     public function findByFieldId(Request $request,$field_id)
     {
         $perPage = $request->get('per_page', 10); // Mặc định mỗi trang 10 field
         return APIResponse::paginated($this->commentService->findByFieldId($field_id,$perPage));
     }
 
+    // lay ra comment cu the theo id
     public function findById($comment_id)
     {
         return APIResponse::success($this->commentService->findById($comment_id));
     }
 
+    // luu comment
     public function store(CreateCommentRequest $commentRequest)
     {
         $data = $commentRequest->validated();
@@ -42,6 +45,7 @@ class CommentController extends Controller
         return APIResponse::success($comment);
     }
 
+    //sua comment
     public function update(UpdateCommentRequest $commentRequest, string $id)
     {
         $data = $commentRequest->validated();
@@ -51,6 +55,7 @@ class CommentController extends Controller
         return APIResponse::success($commentUpdate);
     }
 
+    //huy comment
     public function destroy(string $id)
     {
         $userCurrent = auth()->user()->id;

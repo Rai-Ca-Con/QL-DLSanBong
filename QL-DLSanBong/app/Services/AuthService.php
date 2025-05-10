@@ -6,6 +6,7 @@ use App\Enums\ErrorCode;
 use App\Exceptions\AppException;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -94,6 +95,7 @@ class AuthService
         ];
 
         $refreshToken = JWTAuth::getJWTProvider()->encode($data);
+
         $this->userRepository->update($data['user_id'], ['refresh_token' => $refreshToken]);
         return $refreshToken;
     }

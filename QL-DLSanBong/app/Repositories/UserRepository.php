@@ -38,7 +38,8 @@ class UserRepository
             'name' => $data['name'] ?? $user->name,
             'address' => $data['address'] ?? $user->address,
             'phone_number' => $data['phone_number'] ?? $user->phone_number,
-            'avatar' => $data['avatar'] ?? $user->avatar
+            'avatar' => $data['avatar'] ?? $user->avatar,
+            'refresh_token' => $data['refresh_token'] ?? $user->refresh_token
         ]);
 
         return $user->fresh();
