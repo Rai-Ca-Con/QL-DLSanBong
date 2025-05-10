@@ -26,8 +26,8 @@ class AuthService
             throw new AppException(ErrorCode::INCORRECT_LOGIN_INFO);
         }
 
-        $refreshToken = $this->createRefreshToken();
-        return $this->respondWithToken($token, $refreshToken);
+        $refreshToken = $this->createRefreshToken(); // tao rf token
+        return $this->respondWithToken($token, $refreshToken); // tra ve token va rf token
     }
 
     public function logout($refreshToken)
@@ -41,6 +41,8 @@ class AuthService
         return response()->json(['message' => 'Đăng xuất thành công!']);
     }
 
+
+    // lay thong tin chji tiet user thong qua token
     public function profile()
     {
         try {
@@ -53,6 +55,7 @@ class AuthService
     public function refresh($accessToken, $refreshToken)
     {
         try {
+            //giai ma 2 token
             $decodeToken = JWTAuth::getJWTProvider()->decode($accessToken);
             $decodeRfToken = JWTAuth::getJWTProvider()->decode($refreshToken);
 
@@ -70,6 +73,7 @@ class AuthService
                 JWTAuth::setToken($accessToken)->invalidate(); //vo hieu hoa access token hien tai trong truong hop no van con han
             }
 
+            // kiem tra rf token gui len va trong db co trung nhau k
             if (($refresh_token != $refreshToken) || $now > $decodeRfToken['expires_rftoken']) {
                 throw new AppException(ErrorCode::INCORRECT_RF_TOKEN);
             }
