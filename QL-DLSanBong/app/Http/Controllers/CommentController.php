@@ -7,6 +7,7 @@ use App\Events\CommentDeleted;
 use App\Events\CommentUpdated;
 use App\Http\Requests\CommentRequest\CreateCommentRequest;
 use App\Http\Requests\CommentRequest\UpdateCommentRequest;
+use App\Http\Resources\CommentResource;
 use App\Responses\APIResponse;
 use App\Services\CommentService;
 use Illuminate\Http\Request;
@@ -21,10 +22,10 @@ class CommentController extends Controller
         $this->commentService = $commentService;
     }
 
-    public function index(Request $request)
+    public function findByFieldId(Request $request,$field_id)
     {
         $perPage = $request->get('per_page', 10); // Mặc định mỗi trang 10 field
-        return APIResponse::success($this->commentService->paginate($perPage));
+        return APIResponse::paginated($this->commentService->findByFieldId($field_id,$perPage));
     }
 
     public function findById($comment_id)

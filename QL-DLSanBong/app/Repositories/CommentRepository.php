@@ -6,9 +6,12 @@ use App\Models\Comment;
 
 class CommentRepository
 {
-    public function paginate($perPage = 10)
+    public function findByFieldId($fieldId,$perPage = 10)
     {
-        return Comment::orderBy('created_at', 'desc')
+        return Comment::with(['user','children.user'])
+        ->where('field_id', $fieldId)
+        ->whereNull('parent_id')
+        ->orderBy('created_at', 'desc')
         ->paginate($perPage);
     }
 
@@ -30,6 +33,7 @@ class CommentRepository
 
         $comment->update([
             'content' => $data['content'],
+            'image_url' => $data['image_url'] ?? $comment->image_url
         ]);
 
         return $comment->fresh();

@@ -6,6 +6,8 @@ namespace App\Services;
 use App\Repositories\BookingRepository;
 use App\Repositories\ReceiptRepository;
 use App\Repositories\FieldRepository;
+use App\Services\FactoryService\Notification\EmailNotificationFactory;
+use App\Services\FactoryService\Notification\NotificationFactory;
 use Illuminate\Support\Facades\Log;
 
 class VNPayService
@@ -14,6 +16,7 @@ class VNPayService
     protected $receiptRepo;
     protected $bookingScheduleRepo;
     protected $hashSecret;
+    protected NotificationFactory $notificationFactory;
 
     public function __construct(ReceiptRepository $receiptRepo, BookingRepository $bookingScheduleRepo, FieldRepository $fieldRepo)
     {
@@ -76,6 +79,12 @@ class VNPayService
             $field = $this->fieldRepo->findById($receiptWithUserAndBooking->booking->field_id);
             $receiptWithUserAndBooking->field = $field;
             Log::info($receiptWithUserAndBooking);
+
+            // send bill dat san qua email
+            $this->notificationFactory = new EmailNotificationFactory();
+            $emailNotify = $this->notificationFactory->createNotification();
+            $emailNotify->send($receiptWithUserAndBooking,"Đặt sân");
+
             return ['RspCode' => '00', 'Message' => 'Success'];
         }
         // Thanh toán thất bại

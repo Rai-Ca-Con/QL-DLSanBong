@@ -20,10 +20,17 @@ class Comment extends Model
         'id',
         'user_id',
         'field_id',
+        'parent_id',
         'content',
         "status",
+        "image_url",
         'created_at',
         'updated_at',
+    ];
+
+    protected $hidden = [
+        'status',
+        'deleted_at',
     ];
 
     protected static function boot()
@@ -36,5 +43,19 @@ class Comment extends Model
                 $model->id = (string)Str::uuid();
             }
         });
+
+        static::deleting(function ($comment) {
+            $comment->children()->delete(); // ⬅️ gọi delete() cho các con
+        });
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Comment::class, 'parent_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

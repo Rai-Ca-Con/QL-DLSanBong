@@ -67,4 +67,18 @@ class ImageService
     {
         return $this->repository->getByFieldId($fieldId);
     }
+
+    public function saveImageInDisk($imageFile,$folder)
+    {
+        $path = $imageFile->store('images/'.$folder, 'public');
+        return 'storage/' . $path; // Lưu đường dẫn ảnh
+    }
+
+    public function deleteImageInDisk($imageUrl)
+    {
+        $path = str_replace('storage/', '', $imageUrl);
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
+    }
 }

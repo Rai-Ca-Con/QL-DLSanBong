@@ -18,6 +18,8 @@ class UpdateCommentRequest extends FormRequest
     {
         return [
             'content' => 'required|min:15',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:10240',
+            'image_status' => 'required',
         ];
     }
     public function messages()
@@ -25,6 +27,10 @@ class UpdateCommentRequest extends FormRequest
         return [
             'content.required' => "COMMENT_CONTENT_NOT_EMPTY",
             'content.min' => "COMMENT_CONTENT_TOO_SHORT",
+            'image.image' => "NOT_IMAGE",
+            'image.mimes' => "WRONG_FILE_FORMAT",
+            'image.max' => "FILE_TOO_LARGE",
+            'image_status.required' => "STATE_ID_REQUIRED",
         ];
     }
 
