@@ -5,18 +5,21 @@ namespace App\Services;
 
 use App\Repositories\BookingRepository;
 use App\Repositories\ReceiptRepository;
+use App\Repositories\FieldRepository;
 use Illuminate\Support\Facades\Log;
 
 class VNPayService
 {
+    protected $fieldRepo;
     protected $receiptRepo;
     protected $bookingScheduleRepo;
     protected $hashSecret;
 
-    public function __construct(ReceiptRepository $receiptRepo, BookingRepository $bookingScheduleRepo)
+    public function __construct(ReceiptRepository $receiptRepo, BookingRepository $bookingScheduleRepo, FieldRepository $fieldRepo)
     {
         $this->receiptRepo = $receiptRepo;
         $this->bookingScheduleRepo = $bookingScheduleRepo;
+        $this->fieldRepo = $fieldRepo;
         $this->hashSecret = env('VNP_HASH_SECRET');
     }
     public function handleCallback(array $params)
@@ -69,8 +72,10 @@ class VNPayService
             $this->receiptRepo->markAsPaid($receipt);
             // Xử lý cho việc gửi thông báo về email
             $receiptId = $params['vnp_TxnRef'];
-            $data = $this->receiptRepo->findWithBooking($receiptId);
-            Log::info('Trả về cho Email:'.$data);
+            $receiptWithUserAndBooking = $this->receiptRepo->findWithBooking($receiptId);
+            $field = $this->fieldRepo->findById($receiptWithUserAndBooking->booking->field_id);
+
+            Log::info('Gộp obj1 và obj2:', [$receiptWithUserAndBooking, $field]);
             return ['RspCode' => '00', 'Message' => 'Success'];
         }
         // Thanh toán thất bại

@@ -71,7 +71,7 @@ class BookingService
 //        $momoResponse = $momoService->createPayment($totalPrice, $receipt->id);
 
         // 5. Gọi VNPayService để tạo thanh toán
-        $vnpayService = new VNPayService($this->receiptRepository, $this->bookingRepository);
+        $vnpayService = new VNPayService($this->receiptRepository, $this->bookingRepository, $this->fieldRepository);
         $payUrl = $vnpayService->createPaymentUrl($receipt);
 
         $receipt->payment_url = $payUrl;

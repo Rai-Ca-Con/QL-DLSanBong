@@ -56,6 +56,11 @@ class FieldRepository
         return $this->model->with(['category', 'state', 'images'])->find($id);
     }
 
+    public function findById($id)
+    {
+        return $this->model->find($id);
+    }
+
     public function create(array $data)
     {
         $field = $this->model->create($data);

@@ -32,7 +32,7 @@ class ReceiptRepository
 
     public function findWithBooking($id)
     {
-        return $this->model->with('booking')->find($id);
+        return $this->model->with(['user', 'booking'])->find($id);
     }
 
     public function findByBookingId($bookingId)
