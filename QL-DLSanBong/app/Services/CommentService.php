@@ -9,8 +9,6 @@ use App\Repositories\BookingRepository;
 use App\Repositories\CommentRepository;
 use App\Repositories\FieldRepository;
 use App\Repositories\UserRepository;
-use App\Services\FactoryService\Notification\EmailNotificationFactory;
-use App\Services\FactoryService\Notification\NotificationFactory;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -21,19 +19,16 @@ class CommentService
     protected FieldRepository $fieldRepository;
     protected BookingRepository $bookingRepository;
     protected ImageService $imageService;
-    protected NotificationFactory $notificationFactory;
 
 
     public function __construct(CommentRepository $commentRepository, UserRepository $userRepository,
-                                FieldRepository $fieldRepository, BookingRepository $bookingRepository, ImageService $imageService,
-                                EmailNotificationFactory $notificationFactory)
+                                FieldRepository $fieldRepository, BookingRepository $bookingRepository, ImageService $imageService)
     {
         $this->userRepository = $userRepository;
         $this->commentRepository = $commentRepository;
         $this->fieldRepository = $fieldRepository;
         $this->bookingRepository = $bookingRepository;
         $this->imageService = $imageService;
-        $this->notificationFactory = $notificationFactory;
     }
 
     public function findById($id)
@@ -42,8 +37,8 @@ class CommentService
         if ($existComment == null) {
             throw new AppException(ErrorCode::COMMENT_NON_EXISTED);
         }
-        $emailNotify = $this->notificationFactory->createNotification();
-        $emailNotify->send([],"Đặt sân");
+//        $emailNotify = $this->notificationFactory->createNotification();
+//        $emailNotify->send([],"Đặt sân");
         return new CommentResource($existComment);
     }
 
@@ -83,10 +78,10 @@ class CommentService
         }
 
 //        chi user da dat san do thi moi comment duoc
-//        $userBookedField = $this->bookingRepository->findByUserAndField($user->id, $field->id);
-//        if (!($userBookedField > 0)) {
-//            throw new AppException(ErrorCode::UNAUTHORIZED_ACTION);
-//        }
+        $userBookedField = $this->bookingRepository->findByUserAndField($user->id, $field->id);
+        if (!($userBookedField > 0)) {
+            throw new AppException(ErrorCode::UNAUTHORIZED_ACTION);
+        }
 
         $data["status"] = 0;
         if(isset($data["image"]) && $data["image"] != null) {
@@ -111,15 +106,20 @@ class CommentService
             throw new AppException(ErrorCode::UNAUTHORIZED);
         }
 
-//        if(isset($data["image"]) && $data["image"] != null) {
-        if($data["image_status"] == 0) {
+        // neu sua file anh cu -> anh moi se co key image va thuc hien xoa anh cu -> them anh moi
+        if(isset($data["image"]) && $data["image"] != null) {
             $this->imageService->deleteImageInDisk($existComment->image_url);
             $data["image_url"] = $this->imageService->saveImageInDisk($data["image"],"comment");
         }
-        else
-        {
-            $this->imageService->deleteImageInDisk($existComment->image_url);
-            $data["image_url"] = null;
+        else{
+            // neu khong key(file) up len thi anh co the la k sua anh hoac xoa (khong co file ma chi co url anh) -> key image se la null
+            // xoa thi status = 1 => thuc hien xoa anh
+            if($data["image_status"] == 1) {
+                $this->imageService->deleteImageInDisk($existComment->image_url);
+                $data["image_url"] = "";
+            }
+            // neu k roi vao if == 1 thi $data["image_url"] = null
+            // truong hop k sua anh ma giu nguyen thi da xu li o repo
         }
 
         $commentUpdate = $this->commentRepository->update($id, $data);
