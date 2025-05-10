@@ -37,8 +37,7 @@ class CommentService
         if ($existComment == null) {
             throw new AppException(ErrorCode::COMMENT_NON_EXISTED);
         }
-//        $emailNotify = $this->notificationFactory->createNotification();
-//        $emailNotify->send([],"Đặt sân");
+
         return new CommentResource($existComment);
     }
 
