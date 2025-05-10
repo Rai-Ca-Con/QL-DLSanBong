@@ -21,7 +21,8 @@ class EmailNotificationService implements INotificationService
             'nameField' => $info->field->name,
             'timeStart' => $info->booking->date_start,
             'timeEnd' => $info->booking->date_end,
-            'amount' => $info->total_price." VND",
+            'amount' => number_format($info->total_price, 0, ',', '.')." VND",
+
         ];
 
 
