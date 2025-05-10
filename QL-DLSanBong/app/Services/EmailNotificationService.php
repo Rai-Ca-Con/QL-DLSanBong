@@ -30,7 +30,7 @@ class EmailNotificationService implements INotificationService
         Mail::send('notification.email', $data, function ($email) use ($data,$subject) {
             $email->subject("Thông báo thông tin về: ".$subject);
             // gui den dia chi email nao, ten nguoi gui den la gi
-            $email->to('assasinn020@gmail.com','Test1'); //tra ve true || false
+            $email->to($data['emailCus'],'Admin_atus'); //tra ve true || false
             // bien email co the dinh kem 1 file
         });
     }
