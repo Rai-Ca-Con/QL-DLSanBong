@@ -27,7 +27,7 @@ class EmailNotificationService implements INotificationService
 
 
         // ts1 ten view mail; ts2 du lieu gui sang view
-        // ts3 ham xu li logic gui mail
+        // ts3 ham xu li logic gui mail.
         Mail::send('notification.email', $data, function ($email) use ($data,$subject) {
             $email->subject("Thông báo thông tin về: ".$subject);
             // gui den dia chi email nao, ten nguoi gui den la gi
