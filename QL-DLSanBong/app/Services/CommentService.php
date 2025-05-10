@@ -9,6 +9,8 @@ use App\Repositories\BookingRepository;
 use App\Repositories\CommentRepository;
 use App\Repositories\FieldRepository;
 use App\Repositories\UserRepository;
+use App\Services\FactoryService\Notification\EmailNotificationFactory;
+use App\Services\FactoryService\Notification\NotificationFactory;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,16 +21,19 @@ class CommentService
     protected FieldRepository $fieldRepository;
     protected BookingRepository $bookingRepository;
     protected ImageService $imageService;
+    protected NotificationFactory $notificationFactory;
 
 
     public function __construct(CommentRepository $commentRepository, UserRepository $userRepository,
-                                FieldRepository $fieldRepository, BookingRepository $bookingRepository, ImageService $imageService)
+                                FieldRepository $fieldRepository, BookingRepository $bookingRepository, ImageService $imageService,
+                                EmailNotificationFactory $notificationFactory)
     {
         $this->userRepository = $userRepository;
         $this->commentRepository = $commentRepository;
         $this->fieldRepository = $fieldRepository;
         $this->bookingRepository = $bookingRepository;
         $this->imageService = $imageService;
+        $this->notificationFactory = $notificationFactory;
     }
 
     public function findById($id)
@@ -37,6 +42,8 @@ class CommentService
         if ($existComment == null) {
             throw new AppException(ErrorCode::COMMENT_NON_EXISTED);
         }
+        $emailNotify = $this->notificationFactory->createNotification();
+        $emailNotify->send([],"Đặt sân");
         return new CommentResource($existComment);
     }
 
@@ -104,9 +111,15 @@ class CommentService
             throw new AppException(ErrorCode::UNAUTHORIZED);
         }
 
-        if(isset($data["image"]) && $data["image"] != null) {
+//        if(isset($data["image"]) && $data["image"] != null) {
+        if($data["image_status"] == 0) {
             $this->imageService->deleteImageInDisk($existComment->image_url);
             $data["image_url"] = $this->imageService->saveImageInDisk($data["image"],"comment");
+        }
+        else
+        {
+            $this->imageService->deleteImageInDisk($existComment->image_url);
+            $data["image_url"] = null;
         }
 
         $commentUpdate = $this->commentRepository->update($id, $data);
@@ -128,4 +141,5 @@ class CommentService
 
         return $this->commentRepository->delete($id);
     }
+
 }
