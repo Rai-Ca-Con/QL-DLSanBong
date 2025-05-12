@@ -57,13 +57,13 @@ class CommentService
     {
         $user = $this->userRepository->findById($data['user_id']);
         $field = $this->fieldRepository->findByIdAndIsDeleted($data['field_id'], null);
-        if(isset($data["parent_id"]) && $data["parent_id"] != null) {
+        if(isset($data["parent_id"]) && $data["parent_id"] != null) { // neu co key comment cha thi
             $parentComment = $this->commentRepository->findByIdAndIsDeleted($data['parent_id']);
-            if ($parentComment == null) {
+            if ($parentComment == null) { //check xem comment ton tai k
                 throw new AppException(ErrorCode::COMMENT_NON_EXISTED);
             }
 
-            if ($parentComment->parent_id != null) {
+            if ($parentComment->parent_id != null) { // neu ton tai check xem co la comment con cua comment nao k -> comment 1 cap
                 throw new AppException(ErrorCode::COMMENT_NOT_REPLY);
             }
         }
@@ -77,13 +77,13 @@ class CommentService
         }
 
 //        chi user da dat san do thi moi comment duoc
-//        $userBookedField = $this->bookingRepository->findByUserAndField($user->id, $field->id);
-//        if (!($userBookedField > 0)) {
-//            throw new AppException(ErrorCode::UNAUTHORIZED_ACTION);
-//        }
+        $userBookedField = $this->bookingRepository->findByUserAndField($user->id, $field->id);
+        if (!($userBookedField > 0)) {
+            throw new AppException(ErrorCode::UNAUTHORIZED_ACTION);
+        }
 
         $data["status"] = 0;
-        if(isset($data["image"]) && $data["image"] != null) {
+        if(isset($data["image"]) && $data["image"] != null) { //neu co anh thi luu anh
             $data["image_url"] = $this->imageService->saveImageInDisk($data["image"],"comment");
         }
 

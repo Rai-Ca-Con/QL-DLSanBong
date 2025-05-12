@@ -38,6 +38,7 @@ class UserService
         if ($existingUser == null)
             throw new AppException(ErrorCode::USER_NON_EXISTED);
 
+        //neu user trong token khac vs user truyen len = id => k sua dc
         if ($data['user_id'] != $existingUser->id)
             throw new AppException(ErrorCode::UNAUTHORIZED);
 
@@ -70,14 +71,17 @@ class UserService
         if ($existingUser == null)
             throw new AppException(ErrorCode::USER_NON_EXISTED);
 
+        //neu dung la la user hoac la admin thi dc xoa
         if (!($currentUser == $existingUser->id || $role == 1)) {
             throw new AppException(ErrorCode::UNAUTHORIZED);
         }
 
+        // neu la user thi inactive access token // neu la admin thi de token user tu het han
         if ($role != 1) {
             JWTAuth::setToken($accessToken)->invalidate();
         }
 
+        // inactive rf token
         $this->userRepository->update($existingUser->id, ['refresh_token' => '']);
         return $this->userRepository->delete($userId);
     }
