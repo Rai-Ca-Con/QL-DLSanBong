@@ -26,3 +26,7 @@ Route::group([
 Route::post('auth/login', [AuthController::class, 'login']);
 Route::post('auth/refresh', [AuthController::class, 'refresh']);
 
+Route::post('broadcasting/auth', function (Request $request) {
+    // phải return chứ không bỏ qua!
+    return Broadcast::auth($request);
+})->middleware('auth:api');

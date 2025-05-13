@@ -63,7 +63,7 @@ class ThreadService
         return $this->threadRepository->create(["user_id" => $user_id]);
     }
 
-    public function readAllMessage($user_id, $thread) {
+    private function readAllMessage($user_id, $thread) {
         $this->messageRepository->readAll($thread->id, $user_id);
         if ($thread->last_sender_id !== $user_id) {
             $thread->readed = true;

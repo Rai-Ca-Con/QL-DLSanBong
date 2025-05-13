@@ -9,14 +9,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('messages', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('thread_id')->nullable(false);
-            $table->uuid('sender_id')->nullable(false);
-            $table->uuid('receiver_id')->nullable();
-            $table->timestamp('time_send')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->char('id', 36)->primary();
+            $table->char('thread_id', 36)->nullable(false);
+            $table->char('sender_id', 36)->nullable(false);
+            $table->char('receiver_id', 36)->nullable();
+            $table->datetime('time_send')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->text('content')->nullable(false);
             $table->boolean('readed')->default(false);
-            $table->timestamp('time_read')->nullable();
+            $table->datetime('time_read')->nullable();
 
             $table->foreign('thread_id')->references('id')->on('threads')->onDelete('cascade');
             $table->timestamps();

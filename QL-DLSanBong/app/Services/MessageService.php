@@ -18,11 +18,13 @@ class MessageService
     protected $messageRepository;
     protected $threadRepository;
     protected $threadService;
-    public function __construct(ThreadRepository $receiptRepository, MessageRepository $messageRepository, ThreadService $threadService)
+    protected $imageService;
+    public function __construct(ThreadRepository $receiptRepository, MessageRepository $messageRepository, ThreadService $threadService, ImageService $imageService)
     {
         $this->threadRepository = $receiptRepository;
         $this->messageRepository = $messageRepository;
         $this->threadService = $threadService;
+        $this->imageService = $imageService;
     }
 
     public function getAll($user_id, $thread_id, $page = 1, $size = 10) {
@@ -32,10 +34,9 @@ class MessageService
         return $this->messageRepository->getAll($thread_id, $page, $size);
     }
 
-    public function sendMessage($user_id, $thread_id, $content) {
-        return DB::transaction(function () use ($thread_id, $user_id, $content) {
-            //Log::info('', ['thread_id' => $thread_id]);
-            $thread = $this->threadRepository->getById($thread_id);
+    public function sendMessage($user_id, $data, $imageRequest = null) {
+        return DB::transaction(function () use ($user_id, $data, $imageRequest) {
+            $thread = $this->threadRepository->getById($data['thread_id']);
 
             if ($thread == null) {
                 if ($user_id === MessageService::ADMIN_ID)
@@ -50,16 +51,22 @@ class MessageService
             $newMessage = $this->messageRepository->create([
                 'sender_id' => $user_id,
                 'receiver_id' => $user_id === MessageService::ADMIN_ID ? $thread['user_id'] : MessageService::ADMIN_ID,
-                'content' => $content,
+                'content' => isset($data['content']) ? $data['content'] : '',
                 'thread_id' => $thread['id'],
                 'time_send' => now(),
             ]);
+
+            if ($imageRequest && $imageRequest->hasFile('image')) {
+                $this->imageService->uploadImageMessage($imageRequest, $newMessage->id);
+            }
 
             $this->threadRepository->update($thread['id'], [
                 'last_send' => $newMessage->time_send,
                 'last_sender_id' => $user_id,
                 'readed' => false
             ]);
+
+            $newMessage->load(['images', 'thread']);
 
             return $newMessage;
         });
@@ -76,9 +83,5 @@ class MessageService
                 event(new MessageReaded($thread->last_sender_id, new ThreadResource($thread)));
             }
         });
-    }
-
-    function checkUserHasThread($thread, $user_id): bool {
-        return !$thread || $thread['user_id'] !== $user_id || $user_id !== MessageService::ADMIN_ID;
     }
 }

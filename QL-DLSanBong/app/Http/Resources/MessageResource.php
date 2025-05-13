@@ -23,7 +23,9 @@ class MessageResource extends JsonResource
             'content' => $this->content,
             'readed' => $this->readed,
             'time_read' => $this->time_read,
-            'thread_id' => $this->thread_id
+            'thread_id' => $this->thread_id,
+            'images' => ImageResource::collection($this->whenLoaded('images')),
+            'thread' => new ThreadResource($this->whenLoaded('thread'))
         ];
     }
 }

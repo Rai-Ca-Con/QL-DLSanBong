@@ -71,9 +71,7 @@ class ChatController extends Controller
     {
         $data = $request->validated();
         $user_id = auth()->id();
-        $thread_id = $data['thread_id'];
-        $content = $data['content'];
-        $message = $this->messageService->sendMessage($user_id, $thread_id, $content);
+        $message = $this->messageService->sendMessage($user_id, $data, $request);
         $resource = new MessageResource($message);
         event(new MessageCreated($message->receiver_id, $resource));
         return APIResponse::success($resource);

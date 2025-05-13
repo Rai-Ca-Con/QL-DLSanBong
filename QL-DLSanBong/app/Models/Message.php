@@ -42,4 +42,9 @@ class Message extends Model
     {
         return $this->belongsTo(Thread::class, 'thread_id', 'id');
     }
+
+    public function images()
+    {
+        return $this->hasMany(Image::class, 'message_id', 'id');
+    }
 }

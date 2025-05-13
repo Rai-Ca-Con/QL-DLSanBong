@@ -87,7 +87,8 @@ enum ErrorCode
     case FIELD_THREAD_ID_REQUIRED;
     case FIELD_THREAD_ID_MUST_BE_STRING;
     case FIELD_THREAD_ID_TOO_LONG;
-
+    case FIELD_IMAGE_MIN;
+    case FIELD_IMAGE_MAX;
 
     public function code(): int
     {
@@ -175,7 +176,10 @@ enum ErrorCode
             self::FIELD_CONTENT_MUST_BE_STRING => 8002,
             self::FIELD_THREAD_ID_REQUIRED => 8003,
             self::FIELD_THREAD_ID_MUST_BE_STRING => 8004,
-            self::FIELD_THREAD_ID_TOO_LONG => 8005
+            self::FIELD_THREAD_ID_TOO_LONG => 8005,
+            self::FIELD_IMAGE_MIN => 8006,
+            self::FIELD_IMAGE_MAX => 8007
+
 
         };
     }
@@ -265,7 +269,9 @@ enum ErrorCode
             self::FIELD_CONTENT_MUST_BE_STRING => "Nội dung tin nhắn phải là chuỗi",
             self::FIELD_THREAD_ID_REQUIRED => "Mã cuộc hội thoại là bắt buộc",
             self::FIELD_THREAD_ID_MUST_BE_STRING => "Mã cuộc hội thoại phải là chuỗi",
-            self::FIELD_THREAD_ID_TOO_LONG => "Mã cuộc hội thoại quá dài"
+            self::FIELD_THREAD_ID_TOO_LONG => "Mã cuộc hội thoại quá dài",
+            self::FIELD_IMAGE_MIN => "Tối thiểu 1 ảnh",
+            self::FIELD_IMAGE_MAX => "Tối đa 4 ảnh"
         };
     }
 
@@ -351,7 +357,9 @@ enum ErrorCode
             self::FIELD_CONTENT_MUST_BE_STRING,
             self::FIELD_THREAD_ID_REQUIRED,
             self::FIELD_THREAD_ID_MUST_BE_STRING,
-            self::FIELD_THREAD_ID_TOO_LONG => 400,
+            self::FIELD_THREAD_ID_TOO_LONG ,
+            self::FIELD_IMAGE_MIN,
+            self::FIELD_IMAGE_MAX => 400,
         };
     }
 

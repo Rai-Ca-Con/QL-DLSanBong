@@ -25,20 +25,29 @@ class SendMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'content' => 'required|string',
-            'thread_id' => ''
+            'content' => 'required_without:image|string',
+            'thread_id' => '',
+            'image' => 'array|min:1|max:4',
+            'image.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'content.required' => 'FIELD_CONTENT_REQUIRED',
+            'content.required_without' => 'FIELD_CONTENT_REQUIRED',
             'content.string' => 'FIELD_CONTENT_MUST_BE_STRING',
 
             'thread_id.required' => 'FIELD_THREAD_ID_REQUIRED',
             'thread_id.string' => 'FIELD_THREAD_ID_MUST_BE_STRING',
             'thread_id.max' => 'FIELD_THREAD_ID_TOO_LONG',
+
+            'image.array' => 'FIELD_IMAGE_MUST_BE_ARRAY',
+            'image.min' => 'FIELD_IMAGE_MIN',
+            'image.max' => 'FIELD_IMAGE_MAX',
+            'image.*.image' => 'FIELD_IMAGE_INVALID',
+            'image.*.mimes' => 'FIELD_IMAGE_INVALID_TYPE',
+            'image.*.max' => 'FIELD_IMAGE_TOO_LARGE',
         ];
     }
 

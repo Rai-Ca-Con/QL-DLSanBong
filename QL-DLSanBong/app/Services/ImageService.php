@@ -37,6 +37,27 @@ class ImageService
         }
     }
 
+    public function uploadImageMessage(Request $request, $messageId)
+    {
+        // Kiểm tra xem có phải là nhiều ảnh hay không
+        $images = $request->file('image');
+
+        $paths = [];
+
+        // Nếu là mảng ảnh (nhiều ảnh)
+        if (is_array($images)) {
+            foreach ($images as $image) {
+                $paths[] = $this->saveImage($image); // Lưu từng ảnh và lấy đường dẫn
+            }
+            // Lưu nhiều ảnh vào DB
+            $this->repository->storeMultipleMessage($messageId, $paths);
+        } elseif ($images) {
+            // Nếu chỉ có 1 ảnh
+            $paths[] = $this->saveImage($images);
+            $this->repository->storeMultipleMessage($messageId, $paths);
+        }
+    }
+
     // Lưu một ảnh vào server và trả về đường dẫn
     private function saveImage($imageFile)
     {

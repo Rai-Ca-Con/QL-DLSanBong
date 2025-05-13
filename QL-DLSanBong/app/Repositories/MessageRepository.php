@@ -17,6 +17,7 @@ class MessageRepository
         $offset = ($page - 1) * $size;
 
         return $this->model
+            ->with(['images'])
             ->where('thread_id', $thread_id)
             ->orderBy('time_send', 'desc')
             ->skip($offset)
