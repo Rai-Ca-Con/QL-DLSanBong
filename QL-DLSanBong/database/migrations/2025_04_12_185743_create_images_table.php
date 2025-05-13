@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('images', function (Blueprint $table) {
             $table->char('id', 36)->primary(); // UUID
             $table->text('image_url');         // Đường dẫn hình ảnh
-            $table->char('field_id', 36);      // UUID liên kết với bảng fields
+            $table->char('field_id', 36)->nullable();      // UUID liên kết với bảng fields
+            $table->char('message_id', 36)->nullable();
             $table->timestamps();              // created_at & updated_at
         });
     }

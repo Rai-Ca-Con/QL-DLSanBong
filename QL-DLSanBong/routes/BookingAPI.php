@@ -15,7 +15,3 @@ Route::group([
 
 Route::get('/vnpay/callback', [BookingController::class, 'handleBookingPayment']);
 //Route::match(['get', 'post'], '/vnpay/callback', [BookingController::class, 'handleBookingPayment']);
-
-Route::get('/bookings/statistics', [BookingController::class, 'statsUntilDate']);
-Route::get('/bookings/statistics/active-users', [BookingController::class, 'mostActiveUsers']);
-

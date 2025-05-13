@@ -24,11 +24,30 @@ class ImageRepository
         return $image;
     }
 
+
+    public function storeMessage($messageId, $path)
+    {
+        $image = new Image();
+        $image->image_url = $path;
+        $image->message_id = $messageId;
+        $image->save();
+
+        return $image;
+    }
+
     // Lưu nhiều ảnh cùng lúc
     public function storeMultiple($fieldId, $paths)
     {
         foreach ($paths as $path) {
             $this->store($fieldId, $path); // Lưu từng ảnh
+        }
+    }
+
+    // Lưu nhiều ảnh cùng lúc
+    public function storeMultipleMessage($messageId, $paths)
+    {
+        foreach ($paths as $path) {
+            $this->storeMessage($messageId, $path); // Lưu từng ảnh
         }
     }
 
