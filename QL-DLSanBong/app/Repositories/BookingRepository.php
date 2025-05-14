@@ -39,6 +39,15 @@ class BookingRepository
             ->get();
     }
 
+    public function findByUserAndDate($userId, $date)
+    {
+        return $this->model->with(['field'])
+            ->where('user_id', $userId)
+            ->whereDate('date_start', '<=', $date)
+            ->whereDate('date_end', '>=', $date)
+            ->get();
+    }
+
     public function findByFieldAndDate($fieldId, $dateStart, $dateEnd)
     {
         return $this->model->where('field_id', $fieldId)

@@ -15,6 +15,7 @@ class Image extends Model
     protected $fillable = [
         'image_url',
         'field_id',
+        'message_id'
     ];
 
     protected static function boot()
@@ -32,5 +33,10 @@ class Image extends Model
     public function field()
     {
         return $this->belongsTo(Field::class, 'field_id', 'id');
+    }
+
+    public function message()
+    {
+        return $this->belongsTo(Message::class, 'message_id', 'id');
     }
 }
