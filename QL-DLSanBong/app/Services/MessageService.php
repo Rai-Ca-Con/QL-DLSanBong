@@ -76,6 +76,8 @@ class MessageService
         return DB::transaction(function () use ($user_id, $thread) {
             if (is_string($thread))
                 $thread = $this->threadRepository->getById($thread);
+            if ($user_id !== MessageService::ADMIN_ID && $user_id !== $thread->user_id)
+                throw new AppException(ErrorCode::THREAD_NON_EXISTED_OR_NON_PERMISSION);
             $this->messageRepository->readAll($thread->id, $user_id);
             if ($thread->last_sender_id !== $user_id && !$thread->readed) {
                 $thread->readed = true;

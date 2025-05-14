@@ -7,6 +7,8 @@ use App\Repositories\ReceiptRepository;
 use App\Repositories\ThreadRepository;
 use App\Exceptions\AppException;
 use App\Enums\ErrorCode;
+use App\Events\MessageReaded;
+use App\Http\Resources\ThreadResource;
 use Illuminate\Support\Facades\Log;
 class ThreadService
 {
@@ -68,6 +70,7 @@ class ThreadService
         if ($thread->last_sender_id !== $user_id) {
             $thread->readed = true;
             $thread->save();
+            event(new MessageReaded($thread->last_sender_id, new ThreadResource($thread)));
         }
     }
 }

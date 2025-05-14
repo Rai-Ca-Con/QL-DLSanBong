@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Resources\BookingResource;
+use App\Models\BookingSchedule;
 use App\Repositories\BookingRepository;
 use App\Repositories\FieldRepository;
 use App\Repositories\ReceiptRepository;
@@ -27,6 +28,15 @@ class BookingService
     public function isAvailable($fieldId, $dateStart, $dateEnd): bool
     {
         return $this->bookingRepository->findByFieldAndDate($fieldId, $dateStart, $dateEnd)->isEmpty();
+    }
+
+    public function getsByUserToday($userId) {
+        $bookings = $this->bookingRepository->findByUserAndDate($userId, date('Y-m-d'));
+        $receipts = [];
+        foreach ($bookings as $booking) {
+            $receipts[] = $this->receiptRepository->findByBookingId($booking->id);
+        }
+
     }
 
     public function create(array $data)
