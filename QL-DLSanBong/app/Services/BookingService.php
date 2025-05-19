@@ -55,6 +55,7 @@ class BookingService
         $field = $this->fieldRepository->find($data['field_id']);
         $pricePerHour = $field->price;
         $totalPrice = $hours * $pricePerHour;
+        $depositPrice = $totalPrice * 0.3;
 
         // Tạo hóa đơn
         $receipt = $this->receiptRepository->create([
@@ -62,6 +63,7 @@ class BookingService
             'booking_id'  => $bookingId,
             'date'        => now(),
             'total_price' => $totalPrice,
+            'deposit_price' => $depositPrice,
             'status'      => 'pending',
             'expired_at' => now()->addMinutes(15),
         ]);
@@ -125,5 +127,29 @@ class BookingService
         }
 
         return $this->bookingRepository->delete($id);
+    }
+
+//    public function getBookedTimeSlots($fieldId, $date)
+//    {
+//        $bookings = $this->bookingRepository->getBookingsByFieldAndDate($fieldId, $date);
+//
+//        $timeSlots = [];
+//
+//        foreach ($bookings as $booking) {
+//            $start = strtotime($booking->date_start);
+//            $end = strtotime($booking->date_end);
+//
+//            while ($start < $end) {
+//                $timeSlots[] = date('H:i', $start);
+//                $start = strtotime('+1 hour', $start);
+//            }
+//        }
+//
+//        return array_unique($timeSlots);
+//    }
+
+    public function getBookedTimeSlots($fieldId, $date)
+    {
+        return $this->bookingRepository->getBookingsByFieldAndDate($fieldId, $date);
     }
 }

@@ -65,6 +65,15 @@ class BookingController extends Controller
         return APIResponse::success(BookingResource::collection($bookings));
     }
 
+    public function getBookedTimeSlots(Request $request, $fieldId)
+    {
+        $date = $request->query('date');
+        $slots = $this->bookingService->getBookedTimeSlots($fieldId, $date);
+
+//        return response()->json($slots);
+        return APIResponse::success(BookingResource::collection($slots));
+    }
+
 
 
 

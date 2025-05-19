@@ -102,6 +102,19 @@ class BookingRepository
         return $grouped->sortByDesc('total_bookings')->values();
     }
 
+    public function getBookingsByFieldAndDate($fieldId, $date)
+    {
+        return $this->model
+            ->where('field_id', $fieldId)
+            ->whereDate('date_start', $date)
+            ->whereHas('receipt', function ($query) {
+                $query->where('status', 'paid');
+            })
+            ->get();
+//            ->get(['date_start', 'date_end']);
+
+    }
+
     public function findByUserAndField($userId, $fieldId)
     {
         return BookingSchedule::where([
