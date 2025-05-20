@@ -5,7 +5,11 @@ namespace App\Services;
 use App\Http\Resources\BookingResource;
 use App\Repositories\BookingRepository;
 use App\Repositories\FieldRepository;
+use App\Repositories\FieldTimeSlotOverrideRepository;
+use App\Repositories\FieldTimeSlotRepository;
 use App\Repositories\ReceiptRepository;
+use App\Repositories\TimeSlotRepository;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Exceptions\AppException;
 use App\Enums\ErrorCode;
@@ -16,12 +20,18 @@ class BookingService
     protected $bookingRepository;
     protected $receiptRepository;
     protected $fieldRepository;
+    protected $timeSlotRepository;
+    protected $fieldTimeSlotRepository;
+    protected $fieldTimeSlotOverrideRepository;
 
-    public function __construct(BookingRepository $bookingRepository, ReceiptRepository $receiptRepository, FieldRepository $fieldRepository)
+    public function __construct(BookingRepository $bookingRepository, ReceiptRepository $receiptRepository, FieldRepository $fieldRepository, TimeSlotRepository $timeSlotRepository,  FieldTimeSlotRepository $fieldTimeSlotRepository, FieldTimeSlotOverrideRepository $fieldTimeSlotOverrideRepository)
     {
         $this->bookingRepository = $bookingRepository;
         $this->receiptRepository = $receiptRepository;
         $this->fieldRepository = $fieldRepository;
+        $this->timeSlotRepository = $timeSlotRepository;
+        $this->fieldTimeSlotRepository = $fieldTimeSlotRepository;
+        $this->fieldTimeSlotOverrideRepository = $fieldTimeSlotOverrideRepository;
     }
 
     public function isAvailable($fieldId, $dateStart, $dateEnd): bool
@@ -48,13 +58,22 @@ class BookingService
         $bookingId = Str::uuid()->toString();
         $data['id'] = $bookingId;
 
+        // 3. Lấy giá và trạng thái theo ngày, giờ bắt đầu
+        $date = Carbon::parse($data['date_start'])->toDateString(); // YYYY-MM-DD
+        $startTime = Carbon::parse($data['date_start'])->format('H:i:s'); // HH:mm:ss
+
+        $priceAndStatus = $this->getPriceAndStatusForBooking($data['field_id'], $date, $startTime);
+
+//        Log::info($priceAndStatus['status']);
+
+        if ($priceAndStatus['status'] !== 'active') {
+            throw new AppException(ErrorCode::TIME_SLOT_INACTIVE);
+        }
+
         // Tạo lịch đặt sân
         $booking = $this->bookingRepository->create($data);
 
-        $hours = Carbon::parse($data['date_start'])->floatDiffInHours(Carbon::parse($data['date_end'])); // Convert to hours
-        $field = $this->fieldRepository->find($data['field_id']);
-        $pricePerHour = $field->price;
-        $totalPrice = $hours * $pricePerHour;
+        $totalPrice = $priceAndStatus['price'];
         $depositPrice = $totalPrice * 0.3;
 
         // Tạo hóa đơn
@@ -79,12 +98,40 @@ class BookingService
         $receipt->payment_url = $payUrl;
         $receipt->save();
 
-//        return [
-//            'booking' => $booking,
-//            'payUrl' => $payUrl
-//        ];
         return $booking;
 
+    }
+
+    public function getPriceAndStatusForBooking($fieldId, $date, $startTime)
+    {
+        $timeSlot = $this->timeSlotRepository->findByStartHour($startTime);
+        if (!$timeSlot) {
+            throw new AppException(ErrorCode::TIME_SLOT_INVALID);
+        }
+
+        // Ưu tiên override nếu có
+        $override = $this->fieldTimeSlotOverrideRepository
+            ->findByFieldSlotAndDate($fieldId, $timeSlot->id, $date);
+
+        if ($override) {
+            return [
+                'price' => $override->custom_price,
+                'status' => $override->status,
+            ];
+        }
+
+        // Dùng giá mặc định nếu không có override
+        $fieldSlot = $this->fieldTimeSlotRepository
+            ->findByFieldAndSlot($fieldId, $timeSlot->id);
+
+        if (!$fieldSlot) {
+            throw new AppException(ErrorCode::FIELD_TIME_SLOT_NOT_FOUND);
+        }
+
+        return [
+            'price' => $fieldSlot->custom_price,
+            'status' => $fieldSlot->status,
+        ];
     }
 
     public function findById($id)
@@ -151,5 +198,24 @@ class BookingService
     public function getBookedTimeSlots($fieldId, $date)
     {
         return $this->bookingRepository->getBookingsByFieldAndDate($fieldId, $date);
+    }
+
+    public function getWeeklyBookings(string $date, $fieldId = null)
+    {
+        $selectedDate = Carbon::parse($date);
+
+        $startOfWeek = $selectedDate->copy();
+        $startOfWeek->startOfWeek(Carbon::MONDAY)->startOfDay();
+
+        $endOfWeek = $selectedDate->copy();
+        $endOfWeek->endOfWeek(Carbon::SUNDAY)->endOfDay();
+
+        $bookings = $this->bookingRepository->getBookingsByWeek($startOfWeek, $endOfWeek, $fieldId);
+
+        return [
+            'start_of_week' => $startOfWeek->toDateString(),
+            'end_of_week' => $endOfWeek->toDateString(),
+            'bookings' => $bookings,
+        ];
     }
 }

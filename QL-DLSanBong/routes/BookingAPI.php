@@ -21,5 +21,6 @@ Route::get('/statistics/active-users', [BookingController::class, 'mostActiveUse
 
 
 Route::get('/booked-time-slots/{fieldId}', [BookingController::class, 'getBookedTimeSlots']);
+Route::get('/bookings/weekly', [BookingController::class, 'getWeeklyBookings']);
 
 
