@@ -81,6 +81,10 @@ enum ErrorCode
     case FIELD_IMAGE_INVALID_TYPE;
     case FIELD_IMAGE_TOO_LARGE;
     case FIELD_NOT_ACTIVE;
+    case TIME_SLOT_INVALID;
+    case TIME_SLOT_INACTIVE;
+    case FIELD_TIME_SLOT_NOT_FOUND;
+    case TIME_SLOT_ALREADY_BOOKED;
 
 
 
@@ -167,6 +171,10 @@ enum ErrorCode
             self::FIELD_IMAGE_INVALID_TYPE => 5183,
             self::FIELD_IMAGE_TOO_LARGE => 5184,
             self::FIELD_NOT_ACTIVE => 5185,
+            self::TIME_SLOT_INVALID => 5186,
+            self::TIME_SLOT_INACTIVE  => 5187,
+            self::FIELD_TIME_SLOT_NOT_FOUND => 5188,
+            self::TIME_SLOT_ALREADY_BOOKED => 5189,
 
 
 
@@ -220,6 +228,8 @@ enum ErrorCode
             self::UNAUTHORIZED_ACTION => "Bạn không có quyền thực hiện hành động này",
             self::BOOKING_START_IN_PAST => "Không thể đặt sân trong quá khứ",
             self::BOOKING_START_TOO_FAR => "Chỉ được đặt sân tối đa trước 30 ngày",
+            self::TIME_SLOT_INVALID => "Không được đặt sân trong khung giờ này",
+            self::TIME_SLOT_INACTIVE => "Khung thời gian đặt sân tạm thời không hoạt động",
 
             // New FIELD Validation Messages
             self::FIELD_NAME_REQUIRED => 'Tên sân không được để trống',
@@ -253,6 +263,8 @@ enum ErrorCode
             self::FIELD_IMAGE_INVALID_TYPE => 'Loại ảnh không được hỗ trợ',
             self::FIELD_IMAGE_TOO_LARGE => 'Ảnh vượt quá dung lượng cho phép (2MB)',
             self::FIELD_NOT_ACTIVE => 'Sân hiện không hoạt động, không thể đặt chỗ',
+            self::FIELD_TIME_SLOT_NOT_FOUND => 'Không tìm thấy sân cùng khung giờ tương ứng',
+            self::TIME_SLOT_ALREADY_BOOKED => "Không thể cập nhật tại khung giờ đã được đặt"
 
         };
     }
@@ -302,6 +314,11 @@ enum ErrorCode
             self::BOOKING_NOT_FOUND,
             self::BOOKING_START_IN_PAST,
             self::BOOKING_START_TOO_FAR,
+            self::TIME_SLOT_INVALID ,
+            self::TIME_SLOT_INACTIVE,
+            self::FIELD_TIME_SLOT_NOT_FOUND,
+            self::TIME_SLOT_ALREADY_BOOKED,
+
 
                 // New Field Validation
             self::FIELD_NAME_REQUIRED,
