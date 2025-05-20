@@ -140,5 +140,4 @@ class CommentService
 
         return $this->commentRepository->delete($id);
     }
-
 }

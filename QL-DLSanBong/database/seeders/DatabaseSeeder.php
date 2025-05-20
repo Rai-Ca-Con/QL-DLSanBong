@@ -40,6 +40,8 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             StateSeeder::class,
             FieldSeeder::class,
+            TimeSlotSeeder::class,
+            FieldTimeSlotSeeder::class,
         ]);
     }
 }
