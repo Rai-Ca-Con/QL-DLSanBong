@@ -281,7 +281,7 @@ enum ErrorCode
             self::FIELD_IMAGE_TOO_LARGE => 'Ảnh vượt quá dung lượng cho phép (2MB)',
             self::FIELD_NOT_ACTIVE => 'Sân hiện không hoạt động, không thể đặt chỗ',
             self::FIELD_TIME_SLOT_NOT_FOUND => 'Không tìm thấy sân cùng khung giờ tương ứng',
-            self::TIME_SLOT_ALREADY_BOOKED => "Không thể cập nhật tại khung giờ đã được đặt"
+            self::TIME_SLOT_ALREADY_BOOKED => "Không thể cập nhật tại khung giờ đã được đặt",
 
             self::FIELD_CONTENT_REQUIRED => "Nội dung tin nhắn là bắt buộc",
             self::FIELD_CONTENT_MUST_BE_STRING => "Nội dung tin nhắn phải là chuỗi",
