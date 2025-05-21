@@ -218,4 +218,13 @@ class BookingService
             'bookings' => $bookings,
         ];
     }
+
+    public function getBookingWithReceipt(array $data)
+    {
+        $startDateTime = Carbon::parse($data['date'] . ' ' . $data['start_time']);
+        $endDateTime = Carbon::parse($data['date'] . ' ' . $data['end_time']);
+
+        return $this->bookingRepository
+            ->findByFieldAndTime($data['field_id'], $startDateTime, $endDateTime);
+    }
 }
