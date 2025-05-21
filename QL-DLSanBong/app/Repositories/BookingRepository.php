@@ -143,6 +143,15 @@ class BookingRepository
             ->exists();
     }
 
+    public function findByFieldAndTime($fieldId, $startDateTime, $endDateTime)
+    {
+        return BookingSchedule::with(['receipt', 'field'])
+            ->where('field_id', $fieldId)
+            ->where('date_start', $startDateTime)
+            ->where('date_end', $endDateTime)
+            ->first();
+    }
+
     public function findByUserAndField($userId, $fieldId)
     {
         return BookingSchedule::where([

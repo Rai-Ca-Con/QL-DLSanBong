@@ -85,6 +85,8 @@ enum ErrorCode
     case TIME_SLOT_INACTIVE;
     case FIELD_TIME_SLOT_NOT_FOUND;
     case TIME_SLOT_ALREADY_BOOKED;
+    case RECEIPT_NOT_FOUND;
+    case RECEIPT_NOT_ELIGIBLE_FOR_CONFIRMATION;
 
 
 
@@ -175,6 +177,8 @@ enum ErrorCode
             self::TIME_SLOT_INACTIVE  => 5187,
             self::FIELD_TIME_SLOT_NOT_FOUND => 5188,
             self::TIME_SLOT_ALREADY_BOOKED => 5189,
+            self::RECEIPT_NOT_FOUND => 5190,
+            self::RECEIPT_NOT_ELIGIBLE_FOR_CONFIRMATION => 5191,
 
 
 
@@ -266,6 +270,9 @@ enum ErrorCode
             self::FIELD_TIME_SLOT_NOT_FOUND => 'Không tìm thấy sân cùng khung giờ tương ứng',
             self::TIME_SLOT_ALREADY_BOOKED => "Không thể cập nhật tại khung giờ đã được đặt",
 
+            self::RECEIPT_NOT_FOUND => "Không tồn tại hoá đơn",
+            self::RECEIPT_NOT_ELIGIBLE_FOR_CONFIRMATION => "Không thể xác nhận do chưa thanh toán tiền đặt cọc",
+
         };
     }
 
@@ -318,6 +325,9 @@ enum ErrorCode
             self::TIME_SLOT_INACTIVE,
             self::FIELD_TIME_SLOT_NOT_FOUND,
             self::TIME_SLOT_ALREADY_BOOKED,
+            self::RECEIPT_NOT_FOUND,
+            self::RECEIPT_NOT_ELIGIBLE_FOR_CONFIRMATION,
+
 
 
                 // New Field Validation
