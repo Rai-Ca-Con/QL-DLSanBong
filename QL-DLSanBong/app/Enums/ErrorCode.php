@@ -87,6 +87,8 @@ enum ErrorCode
     case TIME_SLOT_INACTIVE;
     case FIELD_TIME_SLOT_NOT_FOUND;
     case TIME_SLOT_ALREADY_BOOKED;
+    case RECEIPT_NOT_FOUND;
+    case RECEIPT_NOT_ELIGIBLE_FOR_CONFIRMATION;
 
     case FIELD_CONTENT_REQUIRED;
     case FIELD_CONTENT_MUST_BE_STRING;
@@ -183,6 +185,8 @@ enum ErrorCode
             self::TIME_SLOT_INACTIVE  => 5187,
             self::FIELD_TIME_SLOT_NOT_FOUND => 5188,
             self::TIME_SLOT_ALREADY_BOOKED => 5189,
+            self::RECEIPT_NOT_FOUND => 5190,
+            self::RECEIPT_NOT_ELIGIBLE_FOR_CONFIRMATION => 5191,
 
             self::FIELD_CONTENT_REQUIRED => 8001,
             self::FIELD_CONTENT_MUST_BE_STRING => 8002,
@@ -283,6 +287,9 @@ enum ErrorCode
             self::FIELD_TIME_SLOT_NOT_FOUND => 'Không tìm thấy sân cùng khung giờ tương ứng',
             self::TIME_SLOT_ALREADY_BOOKED => "Không thể cập nhật tại khung giờ đã được đặt",
 
+            self::RECEIPT_NOT_FOUND => "Không tồn tại hoá đơn",
+            self::RECEIPT_NOT_ELIGIBLE_FOR_CONFIRMATION => "Không thể xác nhận do chưa thanh toán tiền đặt cọc",
+
             self::FIELD_CONTENT_REQUIRED => "Nội dung tin nhắn là bắt buộc",
             self::FIELD_CONTENT_MUST_BE_STRING => "Nội dung tin nhắn phải là chuỗi",
             self::FIELD_THREAD_ID_REQUIRED => "Mã cuộc hội thoại là bắt buộc",
@@ -342,6 +349,9 @@ enum ErrorCode
             self::TIME_SLOT_INACTIVE,
             self::FIELD_TIME_SLOT_NOT_FOUND,
             self::TIME_SLOT_ALREADY_BOOKED,
+            self::RECEIPT_NOT_FOUND,
+            self::RECEIPT_NOT_ELIGIBLE_FOR_CONFIRMATION,
+
 
 
             self::THREAD_NON_EXISTED_OR_NON_PERMISSION => 400,
