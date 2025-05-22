@@ -36,6 +36,7 @@ class ThreadService
     }
 
     public function getByUserId($user_id, $page = 1, $size = 10) {
+        // Đây hàm này
         $threads = $this->threadRepository->getByUserId($user_id);
         if (!$threads || sizeof($threads) === 0)
             throw new AppException(ErrorCode::THREAD_NON_EXISTED_OR_NON_PERMISSION);

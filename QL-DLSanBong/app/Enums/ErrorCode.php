@@ -50,6 +50,7 @@ enum ErrorCode
     case UNAUTHORIZED_ACTION;
 
     case THREAD_NON_EXISTED_OR_NON_PERMISSION;
+    case THREAD_EXISTED;
 
     // Validate Field
     case FIELD_NAME_REQUIRED;
@@ -148,6 +149,7 @@ enum ErrorCode
             self::BOOKING_START_TOO_FAR => 5005,
 
             self::THREAD_NON_EXISTED_OR_NON_PERMISSION => 8000,
+            self::THREAD_EXISTED => 8001,
 
             // Field Validation Codes
             self::FIELD_NAME_REQUIRED => 5100,
@@ -251,6 +253,7 @@ enum ErrorCode
             self::TIME_SLOT_INACTIVE => "Khung thời gian đặt sân tạm thời không hoạt động",
 
             self::THREAD_NON_EXISTED_OR_NON_PERMISSION => 'Thread không tồn tại hoặc bạn không có quyền',
+            self::THREAD_EXISTED => 'Thread của người dùng đã tồn tại',
 
             // New FIELD Validation Messages
             self::FIELD_NAME_REQUIRED => 'Tên sân không được để trống',
@@ -354,7 +357,8 @@ enum ErrorCode
 
 
 
-            self::THREAD_NON_EXISTED_OR_NON_PERMISSION => 400,
+            self::THREAD_NON_EXISTED_OR_NON_PERMISSION,
+            self::THREAD_EXISTED => 400,
 
                 // New Field Validation
             self::FIELD_NAME_REQUIRED,
