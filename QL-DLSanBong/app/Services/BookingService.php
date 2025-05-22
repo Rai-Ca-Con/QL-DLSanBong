@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use App\Exceptions\AppException;
 use App\Enums\ErrorCode;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class BookingService
 {
@@ -176,25 +177,6 @@ class BookingService
         return $this->bookingRepository->delete($id);
     }
 
-//    public function getBookedTimeSlots($fieldId, $date)
-//    {
-//        $bookings = $this->bookingRepository->getBookingsByFieldAndDate($fieldId, $date);
-//
-//        $timeSlots = [];
-//
-//        foreach ($bookings as $booking) {
-//            $start = strtotime($booking->date_start);
-//            $end = strtotime($booking->date_end);
-//
-//            while ($start < $end) {
-//                $timeSlots[] = date('H:i', $start);
-//                $start = strtotime('+1 hour', $start);
-//            }
-//        }
-//
-//        return array_unique($timeSlots);
-//    }
-
     public function getBookedTimeSlots($fieldId, $date)
     {
         return $this->bookingRepository->getBookingsByFieldAndDate($fieldId, $date);
@@ -212,12 +194,27 @@ class BookingService
 
         $bookings = $this->bookingRepository->getBookingsByWeek($startOfWeek, $endOfWeek, $fieldId);
 
+        // Lấy các khung giờ bị inactive trong tuần
+        $inactiveOverrides = $this->fieldTimeSlotOverrideRepository
+            ->getInactiveOverridesByWeek($fieldId, $startOfWeek->toDateString(), $endOfWeek->toDateString());
+
         return [
-            'start_of_week' => $startOfWeek->toDateString(),
-            'end_of_week' => $endOfWeek->toDateString(),
-            'bookings' => $bookings,
+            'start_of_week'   => $startOfWeek->toDateString(),
+            'end_of_week'     => $endOfWeek->toDateString(),
+            'bookings'        => $bookings,
+            'inactive_slots'  => $inactiveOverrides->map(function ($override) {
+                return [
+                    'date'         => $override->date,
+                    'time_slot_id' => $override->time_slot_id,
+                    'start_time'   => $override->timeSlot->start_time,
+                    'end_time'     => $override->timeSlot->end_time,
+                    'status'       => $override->status,
+                ];
+            }),
         ];
     }
+
+
 
     public function getBookingWithReceipt(array $data)
     {
@@ -226,5 +223,54 @@ class BookingService
 
         return $this->bookingRepository
             ->findByFieldAndTime($data['field_id'], $startDateTime, $endDateTime);
+    }
+
+    public function getWeeklyPricing($fieldId, $selectedDate)
+    {
+        $selected = Carbon::parse($selectedDate);
+        $startOfWeek = $selected->copy()->startOfWeek(Carbon::MONDAY);
+        $endOfWeek = $selected->copy()->endOfWeek(Carbon::SUNDAY);
+
+        // Lấy override theo ngày + time_slot_id
+        $overrides = $this->fieldTimeSlotOverrideRepository
+            ->getOverridesForFieldInWeek($fieldId, $startOfWeek->toDateString(), $endOfWeek->toDateString());
+
+        // Lấy cấu hình giá mặc định từ field_time_slot
+        $defaultSlots = $this->fieldTimeSlotRepository
+            ->getActiveSlotsByField($fieldId);
+
+        $results = [];
+
+        foreach (CarbonPeriod::create($startOfWeek, $endOfWeek) as $date) {
+            $dayKey = $date->toDateString();
+            $results[$dayKey] = [];
+
+            foreach ($defaultSlots as $slotId => $defaultSlot) {
+                $overrideKey = $dayKey . '_' . $slotId;
+
+                if (isset($overrides[$overrideKey])) {
+                    $override = $overrides[$overrideKey]->first();
+                    $results[$dayKey][] = [
+                        'time_slot_id' => $slotId,
+                        'start_time' => $defaultSlot->timeSlot->start_time,
+                        'end_time' => $defaultSlot->timeSlot->end_time,
+                        'price' => $override->custom_price,
+                        'status' => $override->status,
+                        'is_override' => true,
+                    ];
+                } else {
+                    $results[$dayKey][] = [
+                        'time_slot_id' => $slotId,
+                        'start_time' => $defaultSlot->timeSlot->start_time,
+                        'end_time' => $defaultSlot->timeSlot->end_time,
+                        'price' => $defaultSlot->custom_price,
+                        'status' => $defaultSlot->status,
+                        'is_override' => false,
+                    ];
+                }
+            }
+        }
+
+        return $results;
     }
 }
