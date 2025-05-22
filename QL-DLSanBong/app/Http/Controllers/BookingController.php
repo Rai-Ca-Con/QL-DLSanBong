@@ -113,7 +113,7 @@ class BookingController extends Controller
             return response()->json(['message' => 'Thiếu field_id hoặc selected_date'], 422);
         }
 
-        $pricing = $this->bookingService->getWeeklyPricing($fieldId, $selectedDate);
+        $pricing = $this->bookingService->getWeeklyFieldStatus($fieldId, $selectedDate);
         return response()->json($pricing);
     }
 }

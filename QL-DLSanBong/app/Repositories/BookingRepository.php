@@ -26,13 +26,6 @@ class BookingRepository
         return $this->model->with(['field'])->find($id);
     }
 
-//    public function findByUser($userId)
-//    {
-//        return $this->model->with(['field'])
-//            ->where('user_id', $userId)
-//            ->get();
-//    }
-
     public function findByUser($userId)
     {
         return $this->model->with(['field', 'receipt'])

@@ -225,52 +225,85 @@ class BookingService
             ->findByFieldAndTime($data['field_id'], $startDateTime, $endDateTime);
     }
 
-    public function getWeeklyPricing($fieldId, $selectedDate)
+
+
+    public function getWeeklyFieldStatus(string $fieldId, string $selectedDate)
     {
         $selected = Carbon::parse($selectedDate);
         $startOfWeek = $selected->copy()->startOfWeek(Carbon::MONDAY);
         $endOfWeek = $selected->copy()->endOfWeek(Carbon::SUNDAY);
 
-        // Lấy override theo ngày + time_slot_id
+        // Lấy override trong tuần
         $overrides = $this->fieldTimeSlotOverrideRepository
             ->getOverridesForFieldInWeek($fieldId, $startOfWeek->toDateString(), $endOfWeek->toDateString());
 
-        // Lấy cấu hình giá mặc định từ field_time_slot
+        // Lấy slot mặc định
         $defaultSlots = $this->fieldTimeSlotRepository
             ->getActiveSlotsByField($fieldId);
 
-        $results = [];
+        // Lấy các booking
+        $bookings = $this->bookingRepository
+            ->getBookingsByWeek($startOfWeek, $endOfWeek, $fieldId);
+
+        // Tạo map các slot đã được book
+        $bookedSlotMap = [];
+
+        foreach ($bookings as $booking) {
+            $bookingDate = Carbon::parse($booking->date_start)->toDateString();
+            $startTime = Carbon::parse($booking->date_start)->format('H:i:s');
+            $endTime = Carbon::parse($booking->date_end)->format('H:i:s');
+
+            foreach ($defaultSlots as $slotId => $slot) {
+                if (
+                    $slot->timeSlot->start_time === $startTime &&
+                    $slot->timeSlot->end_time === $endTime
+                ) {
+                    $key = $bookingDate . '_' . $slotId;
+                    $bookedSlotMap[$key] = true;
+                }
+            }
+        }
+
+        // Xây kết quả
+        $result = [
+            'start_of_week' => $startOfWeek->toDateString(),
+            'end_of_week' => $endOfWeek->toDateString(),
+            'days' => []
+        ];
 
         foreach (CarbonPeriod::create($startOfWeek, $endOfWeek) as $date) {
             $dayKey = $date->toDateString();
-            $results[$dayKey] = [];
+            $result['days'][$dayKey] = [];
 
             foreach ($defaultSlots as $slotId => $defaultSlot) {
                 $overrideKey = $dayKey . '_' . $slotId;
+                $isBooked = isset($bookedSlotMap[$overrideKey]);
 
                 if (isset($overrides[$overrideKey])) {
                     $override = $overrides[$overrideKey]->first();
-                    $results[$dayKey][] = [
+                    $result['days'][$dayKey][] = [
                         'time_slot_id' => $slotId,
-                        'start_time' => $defaultSlot->timeSlot->start_time,
-                        'end_time' => $defaultSlot->timeSlot->end_time,
-                        'price' => $override->custom_price,
-                        'status' => $override->status,
-                        'is_override' => true,
+                        'start_time'   => $defaultSlot->timeSlot->start_time,
+                        'end_time'     => $defaultSlot->timeSlot->end_time,
+                        'price'        => $override->custom_price,
+                        'status'       => $override->status,
+                        'is_override'  => true,
+                        'booked'       => $isBooked,
                     ];
                 } else {
-                    $results[$dayKey][] = [
+                    $result['days'][$dayKey][] = [
                         'time_slot_id' => $slotId,
-                        'start_time' => $defaultSlot->timeSlot->start_time,
-                        'end_time' => $defaultSlot->timeSlot->end_time,
-                        'price' => $defaultSlot->custom_price,
-                        'status' => $defaultSlot->status,
-                        'is_override' => false,
+                        'start_time'   => $defaultSlot->timeSlot->start_time,
+                        'end_time'     => $defaultSlot->timeSlot->end_time,
+                        'price'        => $defaultSlot->custom_price,
+                        'status'       => $defaultSlot->status,
+                        'is_override'  => false,
+                        'booked'       => $isBooked,
                     ];
                 }
             }
         }
 
-        return $results;
+        return $result;
     }
 }
