@@ -184,7 +184,7 @@ class BookingService
             $this->receiptRepository->updateStatus($receipt->id, 'cancelled');
         }
 
-        return $this->bookingRepository->delete($id);
+        return $receipt;
     }
 
     public function getBookedTimeSlots($fieldId, $date)
