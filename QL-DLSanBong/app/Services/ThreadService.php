@@ -59,7 +59,21 @@ class ThreadService
         return $thread;
     }
 
-    public function createThread($user_id) {
+    // public function createThread($user_id) {
+    //     // Kiểm tra nếu thread đã tồn tại thì trả về
+    // $existingThread = $this->threadRepository->getByUserId($user_id)->first();
+
+    // if ($existingThread) {
+    //     return $existingThread;
+    // }
+
+    // // Nếu chưa tồn tại, mới tạo mới
+    // return $this->threadRepository->create([
+    //     'user_id' => $user_id,
+    //     'readed' => false,
+    // ]);
+    // }
+      public function createThread($user_id) {
         return $this->threadRepository->create(["user_id" => $user_id]);
     }
 

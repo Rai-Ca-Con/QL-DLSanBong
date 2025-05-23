@@ -61,6 +61,7 @@ class BookingRepository
             ->whereDate('created_at', $date)
             ->whereHas('receipt', function ($query) {
                 $query->where('status', 'paid');
+
             })
             ->get();
     }

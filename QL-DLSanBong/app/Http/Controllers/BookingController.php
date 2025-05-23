@@ -8,6 +8,8 @@ use App\Responses\APIResponse;
 use App\Services\BookingService;
 use App\Services\VNPayService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Psy\Readline\Hoa\Console;
 
 
 class BookingController extends Controller
@@ -59,7 +61,6 @@ class BookingController extends Controller
     {
         $userId = auth()->id();
         $today = now()->toDateString();
-
         $bookings = $this->bookingService->getTodayPaidBookingsByUser($userId, $today);
 
         return APIResponse::success(BookingResource::collection($bookings));
