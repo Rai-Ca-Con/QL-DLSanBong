@@ -65,6 +65,10 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->group(base_path('routes/StatisticAPI.php'));
 
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/FieldTimeSlotAPI.php'));
+
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });

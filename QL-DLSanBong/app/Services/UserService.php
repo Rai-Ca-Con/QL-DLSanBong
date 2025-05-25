@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\ErrorCode;
 use App\Exceptions\AppException;
+use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -22,10 +23,22 @@ class UserService
         $this->imageService = $imageService;
     }
 
+    public function getAllUser($perPage)
+    {
+        $user = $this->userRepository->getAllUser($perPage);
+        return UserResource::collection($user);
+    }
+
+    public function getUserByKeyword($keyword, $perPage)
+    {
+        $user = $this->userRepository->getUserByKeyword($keyword, $perPage);
+        return UserResource::collection($user);
+    }
+
     public function createUser(array $data)
     {
-        if(isset($data["avatar"]) && $data["avatar"] != null) {
-            $data["avatar"] = $this->imageService->saveImageInDisk($data["avatar"],"user");
+        if (isset($data["avatar"]) && $data["avatar"] != null) {
+            $data["avatar"] = $this->imageService->saveImageInDisk($data["avatar"], "user");
         }
 
         $user = $this->userRepository->create($data);
@@ -38,6 +51,7 @@ class UserService
         if ($existingUser == null)
             throw new AppException(ErrorCode::USER_NON_EXISTED);
 
+        //neu user trong token khac vs user truyen len = id => k sua dc
         if ($data['user_id'] != $existingUser->id)
             throw new AppException(ErrorCode::UNAUTHORIZED);
 
@@ -54,9 +68,9 @@ class UserService
             $existingUser->phone_number = $data['phone_number'];
         }
 
-        if(isset($data["avatar"]) && $data["avatar"] != null) {
+        if (isset($data["avatar"]) && $data["avatar"] != null) {
             $this->imageService->deleteImageInDisk($existingUser->avatar);
-            $data["avatar"] = $this->imageService->saveImageInDisk($data["avatar"],"user");
+            $data["avatar"] = $this->imageService->saveImageInDisk($data["avatar"], "user");
         }
 
         // Save the updated user
@@ -70,14 +84,17 @@ class UserService
         if ($existingUser == null)
             throw new AppException(ErrorCode::USER_NON_EXISTED);
 
+        //neu dung la la user hoac la admin thi dc xoa
         if (!($currentUser == $existingUser->id || $role == 1)) {
             throw new AppException(ErrorCode::UNAUTHORIZED);
         }
 
+        // neu la user thi inactive access token // neu la admin thi de token user tu het han
         if ($role != 1) {
             JWTAuth::setToken($accessToken)->invalidate();
         }
 
+        // inactive rf token
         $this->userRepository->update($existingUser->id, ['refresh_token' => '']);
         return $this->userRepository->delete($userId);
     }

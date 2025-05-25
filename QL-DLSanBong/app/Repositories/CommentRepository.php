@@ -24,7 +24,10 @@ class CommentRepository
 
     public function create(array $data)
     {
-        return Comment::create($data);
+        $comment = Comment::create($data);
+        $comment->load('user'); //Load quan hệ user sau khi tạo
+
+        return $comment;
     }
 
     public function update($id, array $data)
@@ -36,7 +39,7 @@ class CommentRepository
             'image_url' => $data['image_url'] ?? $comment->image_url
         ]);
 
-        return $comment->fresh();
+        return $comment->fresh()->load(['user', 'children.user']);
     }
 
     public function delete($id)

@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\FieldTimeSlotController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,10 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'middleware' => ['auth:api', 'authen_admin:api'],
-    'prefix' => '/statistics'
+    'prefix' => '/field-time-slots'
 ], function () {
-    Route::get('/revenue-by-field', [StatisticsController::class, 'revenueByField']);
-    Route::get('/revenue-until-date', [StatisticsController::class, 'statsUntilDate']);
-    Route::get('/top-users', [StatisticsController::class, 'mostActiveUsers']);
-    Route::get('/revenue-report', [StatisticsController::class, 'revenueReport']);
+    Route::put('/update-by-date', [FieldTimeSlotController::class, 'updateByDate']);
 });

@@ -12,6 +12,10 @@ class FieldRepository
         $this->model = $field;
     }
 
+    public function getAllByName($name) {
+        return Field::where('name', 'like', '%' . $name . '%')->get();
+    }
+
     public function getAll()
     {
         return $this->model->with(['category', 'state', 'images'])->get();

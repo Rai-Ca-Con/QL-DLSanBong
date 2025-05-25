@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\BookingSchedule;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 class BookingRepository
@@ -25,17 +26,19 @@ class BookingRepository
         return $this->model->with(['field'])->find($id);
     }
 
-//    public function findByUser($userId)
-//    {
-//        return $this->model->with(['field'])
-//            ->where('user_id', $userId)
-//            ->get();
-//    }
-
     public function findByUser($userId)
     {
         return $this->model->with(['field', 'receipt'])
             ->where('user_id', $userId)
+            ->get();
+    }
+
+    public function findByUserAndDate($userId, $date)
+    {
+        return $this->model->with(['field'])
+            ->where('user_id', $userId)
+            ->whereDate('date_start', '<=', $date)
+            ->whereDate('date_end', '>=', $date)
             ->get();
     }
 
@@ -103,6 +106,55 @@ class BookingRepository
         return $grouped->sortByDesc('total_bookings')->values();
     }
 
+    // Version lấy những giờ đã được đặt trong ngày (bản cũ)
+    public function getBookingsByFieldAndDate($fieldId, $date)
+    {
+        return $this->model
+            ->where('field_id', $fieldId)
+            ->whereDate('date_start', $date)
+            ->whereHas('receipt', function ($query) {
+                $query->where('status', 'paid');
+            })
+            ->get();
+//            ->get(['date_start', 'date_end']);
+
+    }
+    // Version lấy những giờ đã được đặt trong tuần (bản mới)
+    public function getBookingsByWeek(Carbon $startOfWeek, Carbon $endOfWeek, $fieldId = null)
+    {
+        $query = $this->model
+            ->whereBetween('date_start', [$startOfWeek, $endOfWeek])
+            ->with('field:id,name') // assuming you have a relation bookingSchedule->field
+            ->select('id', 'field_id', 'date_start', 'date_end');
+
+        if ($fieldId) {
+            $query->where('field_id', $fieldId);
+        }
+
+        return $query->get();
+    }
+
+
+
+    public function existsBookingForFieldAndTimeSlot($fieldId, $date, $timeSlotStart)
+    {
+        return $this->model
+            ->where('field_id', $fieldId)
+            ->whereDate('date_start', $date)
+            ->whereTime('date_start', '<=', $timeSlotStart)
+            ->whereTime('date_end', '>', $timeSlotStart)
+            ->exists();
+    }
+
+    public function findByFieldAndTime($fieldId, $startDateTime, $endDateTime)
+    {
+        return BookingSchedule::with(['receipt', 'field'])
+            ->where('field_id', $fieldId)
+            ->where('date_start', $startDateTime)
+            ->where('date_end', $endDateTime)
+            ->first();
+    }
+
     public function findByUserAndField($userId, $fieldId)
     {
         return BookingSchedule::where([
@@ -111,6 +163,33 @@ class BookingRepository
         ])
             ->whereNull('deleted_at')
             ->count();
+    }
+
+    public function getBookingsWithReceiptsFiltered(array $filters)
+    {
+        $query = $this->model->query()
+            ->join('receipts', 'booking_schedule.id', '=', 'receipts.booking_id')
+            ->where('receipts.status', 'paid')
+            ->select('booking_schedule.*') // đảm bảo không lấy nhầm cột receipts.*
+            ->with(['field', 'receipt', 'user']);
+
+        if (!empty($filters['field_id'])) {
+            $query->where('booking_schedule.field_id', $filters['field_id']);
+        }
+
+        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            $query->whereBetween('booking_schedule.date_start', [
+                $filters['start_date'] . ' 00:00:00',
+                $filters['end_date'] . ' 23:59:59',
+            ]);
+        }
+
+        if (!empty($filters['start_time']) && !empty($filters['end_time'])) {
+            $query->whereTime('booking_schedule.date_start', '>=', $filters['start_time'])
+                ->whereTime('booking_schedule.date_end', '<=', $filters['end_time']);
+        }
+
+        return $query->get();
     }
 
 

@@ -20,7 +20,6 @@ class Thread extends Model
         'last_sender_id',
         'readed'
     ];
-
     protected $casts = [
         'last_send' => 'datetime',
         'readed' => 'boolean',

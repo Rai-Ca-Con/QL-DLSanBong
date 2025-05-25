@@ -41,7 +41,16 @@ class MessageService
             if ($thread == null) {
                 if ($user_id === MessageService::ADMIN_ID)
                     throw new AppException(ErrorCode::THREAD_NON_EXISTED_OR_NON_PERMISSION);
-                $thread = $this->threadService->createThread($user_id);
+                $thread = null;
+                try {
+                    $thread = $this->threadService->createThread($user_id);
+                } catch (\Illuminate\Database\QueryException $e) {
+                    if ($e->getCode() == 23000) {
+                        throw new AppException(ErrorCode::THREAD_EXISTED);
+                    } else {
+                        throw $e;
+                    }
+                }
             } else if ($thread['user_id'] !== $user_id && $user_id !== MessageService::ADMIN_ID) {
                 throw new AppException(ErrorCode::THREAD_NON_EXISTED_OR_NON_PERMISSION);
             }
@@ -76,6 +85,8 @@ class MessageService
         return DB::transaction(function () use ($user_id, $thread) {
             if (is_string($thread))
                 $thread = $this->threadRepository->getById($thread);
+            if ($user_id !== MessageService::ADMIN_ID && $user_id !== $thread->user_id)
+                throw new AppException(ErrorCode::THREAD_NON_EXISTED_OR_NON_PERMISSION);
             $this->messageRepository->readAll($thread->id, $user_id);
             if ($thread->last_sender_id !== $user_id && !$thread->readed) {
                 $thread->readed = true;

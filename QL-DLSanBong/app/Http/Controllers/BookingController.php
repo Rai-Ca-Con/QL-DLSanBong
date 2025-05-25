@@ -66,9 +66,37 @@ class BookingController extends Controller
         return APIResponse::success(BookingResource::collection($bookings));
     }
 
+    public function getBookedTimeSlots(Request $request, $fieldId)
+    {
+        $date = $request->query('date');
+        $slots = $this->bookingService->getBookedTimeSlots($fieldId, $date);
 
+//        return response()->json($slots);
+        return APIResponse::success(BookingResource::collection($slots));
+    }
 
+    public function getWeeklyBookings(Request $request)
+    {
+        $date = $request->query('date'); // bắt buộc
+        $fieldId = $request->query('field_id'); // optional nếu muốn lọc theo sân
 
+        if (!$date) {
+            return response()->json(['error' => 'Missing date'], 400);
+        }
+
+        $data = $this->bookingService->getWeeklyBookings($date, $fieldId);
+
+        return response()->json($data);
+    }
+
+    public function getBookingWithReceipt(Request $request)
+    {
+        $data = $request->only(['field_id', 'date', 'start_time', 'end_time']);
+
+        $booking = $this->bookingService->getBookingWithReceipt($data);
+
+        return APIResponse::success(new BookingResource($booking));
+    }
 
     // Callback của VNPay (IPN)
     public function handleBookingPayment(Request $request)
@@ -76,5 +104,17 @@ class BookingController extends Controller
 //        Log::info('VNPay Callback:', $request->all());
         $result = $this->vnPayService->handleCallback($request->all());
         return response()->json($request->all());
+    }
+
+    public function getWeeklyPricing(Request $request, $fieldId)
+    {
+        $selectedDate = $request->query('selected_date');
+
+        if (!$fieldId || !$selectedDate) {
+            return response()->json(['message' => 'Thiếu field_id hoặc selected_date'], 422);
+        }
+
+        $pricing = $this->bookingService->getWeeklyFieldStatus($fieldId, $selectedDate);
+        return response()->json($pricing);
     }
 }

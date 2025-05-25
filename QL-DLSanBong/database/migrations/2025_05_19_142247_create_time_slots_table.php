@@ -9,10 +9,13 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('images', function (Blueprint $table) {
-            $table->uuid('field_id')->nullable()->change();
+        Schema::create('time_slots', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->time('start_time');
+            $table->time('end_time');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('images', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('time_slots');
     }
 };

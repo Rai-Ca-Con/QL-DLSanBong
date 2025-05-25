@@ -7,6 +7,8 @@ use App\Repositories\ReceiptRepository;
 use App\Repositories\ThreadRepository;
 use App\Exceptions\AppException;
 use App\Enums\ErrorCode;
+use App\Events\MessageReaded;
+use App\Http\Resources\ThreadResource;
 use Illuminate\Support\Facades\Log;
 class ThreadService
 {
@@ -34,6 +36,7 @@ class ThreadService
     }
 
     public function getByUserId($user_id, $page = 1, $size = 10) {
+        // Đây hàm này
         $threads = $this->threadRepository->getByUserId($user_id);
         if (!$threads || sizeof($threads) === 0)
             throw new AppException(ErrorCode::THREAD_NON_EXISTED_OR_NON_PERMISSION);
@@ -82,6 +85,7 @@ class ThreadService
         if ($thread->last_sender_id !== $user_id) {
             $thread->readed = true;
             $thread->save();
+            event(new MessageReaded($thread->last_sender_id, new ThreadResource($thread)));
         }
     }
 }

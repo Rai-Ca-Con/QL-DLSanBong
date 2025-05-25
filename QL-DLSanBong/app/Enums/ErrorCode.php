@@ -50,6 +50,7 @@ enum ErrorCode
     case UNAUTHORIZED_ACTION;
 
     case THREAD_NON_EXISTED_OR_NON_PERMISSION;
+    case THREAD_EXISTED;
 
     // Validate Field
     case FIELD_NAME_REQUIRED;
@@ -83,6 +84,12 @@ enum ErrorCode
     case FIELD_IMAGE_INVALID_TYPE;
     case FIELD_IMAGE_TOO_LARGE;
     case FIELD_NOT_ACTIVE;
+    case TIME_SLOT_INVALID;
+    case TIME_SLOT_INACTIVE;
+    case FIELD_TIME_SLOT_NOT_FOUND;
+    case TIME_SLOT_ALREADY_BOOKED;
+    case RECEIPT_NOT_FOUND;
+    case RECEIPT_NOT_ELIGIBLE_FOR_CONFIRMATION;
 
     case FIELD_CONTENT_REQUIRED;
     case FIELD_CONTENT_MUST_BE_STRING;
@@ -142,6 +149,7 @@ enum ErrorCode
             self::BOOKING_START_TOO_FAR => 5005,
 
             self::THREAD_NON_EXISTED_OR_NON_PERMISSION => 8000,
+            self::THREAD_EXISTED => 8001,
 
             // Field Validation Codes
             self::FIELD_NAME_REQUIRED => 5100,
@@ -175,6 +183,12 @@ enum ErrorCode
             self::FIELD_IMAGE_INVALID_TYPE => 5183,
             self::FIELD_IMAGE_TOO_LARGE => 5184,
             self::FIELD_NOT_ACTIVE => 5185,
+            self::TIME_SLOT_INVALID => 5186,
+            self::TIME_SLOT_INACTIVE  => 5187,
+            self::FIELD_TIME_SLOT_NOT_FOUND => 5188,
+            self::TIME_SLOT_ALREADY_BOOKED => 5189,
+            self::RECEIPT_NOT_FOUND => 5190,
+            self::RECEIPT_NOT_ELIGIBLE_FOR_CONFIRMATION => 5191,
 
             self::FIELD_CONTENT_REQUIRED => 8001,
             self::FIELD_CONTENT_MUST_BE_STRING => 8002,
@@ -235,8 +249,11 @@ enum ErrorCode
             self::UNAUTHORIZED_ACTION => "Bạn không có quyền thực hiện hành động này",
             self::BOOKING_START_IN_PAST => "Không thể đặt sân trong quá khứ",
             self::BOOKING_START_TOO_FAR => "Chỉ được đặt sân tối đa trước 30 ngày",
+            self::TIME_SLOT_INVALID => "Không được đặt sân trong khung giờ này",
+            self::TIME_SLOT_INACTIVE => "Khung thời gian đặt sân tạm thời không hoạt động",
 
             self::THREAD_NON_EXISTED_OR_NON_PERMISSION => 'Thread không tồn tại hoặc bạn không có quyền',
+            self::THREAD_EXISTED => 'Thread của người dùng đã tồn tại',
 
             // New FIELD Validation Messages
             self::FIELD_NAME_REQUIRED => 'Tên sân không được để trống',
@@ -270,6 +287,11 @@ enum ErrorCode
             self::FIELD_IMAGE_INVALID_TYPE => 'Loại ảnh không được hỗ trợ',
             self::FIELD_IMAGE_TOO_LARGE => 'Ảnh vượt quá dung lượng cho phép (2MB)',
             self::FIELD_NOT_ACTIVE => 'Sân hiện không hoạt động, không thể đặt chỗ',
+            self::FIELD_TIME_SLOT_NOT_FOUND => 'Không tìm thấy sân cùng khung giờ tương ứng',
+            self::TIME_SLOT_ALREADY_BOOKED => "Không thể cập nhật tại khung giờ đã được đặt",
+
+            self::RECEIPT_NOT_FOUND => "Không tồn tại hoá đơn",
+            self::RECEIPT_NOT_ELIGIBLE_FOR_CONFIRMATION => "Không thể xác nhận do chưa thanh toán tiền đặt cọc",
 
             self::FIELD_CONTENT_REQUIRED => "Nội dung tin nhắn là bắt buộc",
             self::FIELD_CONTENT_MUST_BE_STRING => "Nội dung tin nhắn phải là chuỗi",
@@ -326,8 +348,17 @@ enum ErrorCode
             self::BOOKING_NOT_FOUND,
             self::BOOKING_START_IN_PAST,
             self::BOOKING_START_TOO_FAR,
+            self::TIME_SLOT_INVALID ,
+            self::TIME_SLOT_INACTIVE,
+            self::FIELD_TIME_SLOT_NOT_FOUND,
+            self::TIME_SLOT_ALREADY_BOOKED,
+            self::RECEIPT_NOT_FOUND,
+            self::RECEIPT_NOT_ELIGIBLE_FOR_CONFIRMATION,
 
-            self::THREAD_NON_EXISTED_OR_NON_PERMISSION => 400,
+
+
+            self::THREAD_NON_EXISTED_OR_NON_PERMISSION,
+            self::THREAD_EXISTED => 400,
 
                 // New Field Validation
             self::FIELD_NAME_REQUIRED,
