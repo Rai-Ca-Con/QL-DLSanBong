@@ -101,7 +101,7 @@ return [
     |
     */
 
-    'ttl' => env('JWT_TTL', 30), // thay doi thoi gian song token : 1p->60s
+    'ttl' => env('JWT_TTL', 120), // thay doi thoi gian song token : 1p->60s
 
     /*
     |--------------------------------------------------------------------------

@@ -15,7 +15,7 @@ class ReceiptService
         $this->receiptRepository = $receiptRepository;
     }
 
-    public function confirmFullPayment(string $id)
+    public function confirmFullPayment(string $id) // xac nhan thanh toan full ben admin
     {
         $receipt = $this->receiptRepository->find($id);
 

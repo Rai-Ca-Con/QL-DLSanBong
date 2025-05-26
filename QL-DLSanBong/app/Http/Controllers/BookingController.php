@@ -65,6 +65,7 @@ class BookingController extends Controller
         return APIResponse::success(BookingResource::collection($bookings));
     }
 
+    // k con dung
     public function getBookedTimeSlots(Request $request, $fieldId)
     {
         $date = $request->query('date');

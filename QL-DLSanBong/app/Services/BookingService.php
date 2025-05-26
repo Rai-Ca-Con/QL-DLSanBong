@@ -38,6 +38,7 @@ class BookingService
 
     public function isAvailable($fieldId, $dateStart, $dateEnd): bool
     {
+        // book ma chua huy thi booking status la active k lay cancel by user
         return $this->bookingRepository->findByFieldAndDate($fieldId, $dateStart, $dateEnd)->isEmpty();
     }
 
@@ -188,11 +189,13 @@ class BookingService
 //        return $receipt;
     }
 
+    //k dung
     public function getBookedTimeSlots($fieldId, $date)
     {
         return $this->bookingRepository->getBookingsByFieldAndDate($fieldId, $date);
     }
 
+    // k dung
     public function getWeeklyBookings(string $date, $fieldId = null)
     {
         $selectedDate = Carbon::parse($date);
@@ -226,7 +229,7 @@ class BookingService
     }
 
 
-
+    // chon khung gio da dat va xem chi tiet cac hoa don
     public function getBookingWithReceipt(array $data)
     {
         $startDateTime = Carbon::parse($data['date'] . ' ' . $data['start_time']);
@@ -237,7 +240,7 @@ class BookingService
     }
 
 
-
+    // hien thi gia tren bang dat san
     public function getWeeklyFieldStatus(string $fieldId, string $selectedDate)
     {
         $selected = Carbon::parse($selectedDate);
@@ -290,7 +293,7 @@ class BookingService
                 $overrideKey = $dayKey . '_' . $slotId;
                 $isBooked = isset($bookedSlotMap[$overrideKey]);
 
-                if (isset($overrides[$overrideKey])) {
+                if (isset($overrides[$overrideKey])) { // neu ma admin chinh sua gia hoac status
                     $override = $overrides[$overrideKey]->first();
                     $result['days'][$dayKey][] = [
                         'time_slot_id' => $slotId,

@@ -15,11 +15,11 @@ class StatisticsService
         $this->receiptRepository = $receiptRepository;
     }
 
-    public function getBookingStatsUntil($date)
+    public function getBookingStatsUntil($date) // thong ke den 1 hom dc chon
     {
         return $this->bookingRepository->countBookingsPerFieldUntil($date);
     }
-    public function getRevenueByFieldInRange($startDate, $endDate)
+    public function getRevenueByFieldInRange($startDate, $endDate) // thong ke so luot dat tren
     {
         return $this->receiptRepository->getRevenueByFieldInRange($startDate, $endDate);
     }

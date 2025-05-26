@@ -30,7 +30,7 @@ class FieldTimeSlotService
         return $this->fieldTimeSlotRepository->update($id, $data);
     }
 
-    public function overrideByDate(array $data)
+    public function overrideByDate(array $data) // sua gia va inactive khung gio ben admin
     {
         $startHour = Carbon::parse($data['date_start'])->format('H:i:s');
         $date = Carbon::parse($data['date_start'])->toDateString();
