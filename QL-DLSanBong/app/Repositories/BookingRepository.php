@@ -162,6 +162,7 @@ class BookingRepository
         return BookingSchedule::where([
             ['user_id', '=', $userId],
             ['field_id', '=', $fieldId],
+            ['booking_status', '=', 'active'],
         ])
             ->whereNull('deleted_at')
             ->count();
