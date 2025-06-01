@@ -142,6 +142,7 @@ class BookingRepository
     {
         return $this->model
             ->where('field_id', $fieldId)
+            ->where('booking_status', '!=', 'cancelled_by_user')
             ->whereDate('date_start', $date)
             ->whereTime('date_start', '<=', $timeSlotStart)
             ->whereTime('date_end', '>', $timeSlotStart)
