@@ -18,6 +18,7 @@ class ReceiptResource extends JsonResource
             'field_id' => $this->field_id,
             'field' => new FieldResource($this->field),
             'total_revenue' => $this->total_revenue,
+            'receipts' => $this->receipts
         ];
     }
 }

@@ -68,9 +68,13 @@ class ReceiptRepository
 //            });
 //    }
 
+
+
+
     public function getRevenueByFieldInRange($startDate, $endDate)
     {
-        return $this->model->query()
+        // Truy vấn doanh thu theo sân
+        $revenues = $this->model->query()
             ->selectRaw('
             booking_schedule.field_id,
             SUM(CASE
@@ -83,12 +87,28 @@ class ReceiptRepository
             ->whereBetween('receipts.created_at', [$startDate, $endDate])
             ->where('receipts.status', 'paid')
             ->groupBy('booking_schedule.field_id')
-            ->get()
-            ->map(function ($item) {
-                $item->field = \App\Models\Field::find($item->field_id);
-                return $item;
-            });
+            ->get();
+
+        // Lấy receipts trong khoảng thời gian
+        $allReceipts = $this->model
+            ->with('booking')
+            ->whereHas('booking')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('status', 'paid')
+            ->get();
+
+        // Gắn receipts vào từng item revenue theo field_id
+        foreach ($revenues as $item) {
+            $item->field = \App\Models\Field::find($item->field_id);
+
+            $item->receipts = $allReceipts->filter(function ($receipt) use ($item) {
+                return optional($receipt->booking)->field_id === $item->field_id;
+            })->values();
+        }
+
+        return $revenues;
     }
+
 
     public function markAsFullyPaid(string $id)
     {

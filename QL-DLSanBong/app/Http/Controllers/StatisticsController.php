@@ -55,6 +55,7 @@ class StatisticsController extends Controller
 
 //        $revenues = $this->statisticsService->getRevenueByFieldInRange($start, $end);
         return APIResponse::success(ReceiptResource::collection($this->statisticsService->getRevenueByFieldInRange($start, $end)));
+//        return response()->json($this->statisticsService->getRevenueByFieldInRange($start, $end));
 
 //        return response()->json($revenues);
 //        return APIResponse::success(FieldResource::collection($this->fieldService->paginate($perPage)));
@@ -80,5 +81,7 @@ class StatisticsController extends Controller
             'total_revenue' => $report['total_revenue'],
             'bookings' => BookingResource::collection($report['bookings']),
         ]);
+
+//        return response()->json($report['bookings']);
     }
 }
