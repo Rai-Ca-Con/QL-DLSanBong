@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ReceiptResource;
-use App\Responses\APIResponse;
 use App\Services\ReceiptService;
-use Illuminate\Http\Request;
 
 class ReceiptController extends Controller
 {
